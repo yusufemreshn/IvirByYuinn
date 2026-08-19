@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ için bulut yedekleme ve cihaz-cihaz aktarımında nelerin
+     dahil edileceğini tanımlayan dosya. Room veritabanı eklendiğinde
+     (Faz 1) burayı görev verilerini kapsayacak şekilde güncelleyeceğiz. -->
+<data-extraction-rules>
+    <cloud-backup>
+    </cloud-backup>
+</data-extraction-rules>

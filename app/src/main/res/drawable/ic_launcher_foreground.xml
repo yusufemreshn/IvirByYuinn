@@ -1,0 +1,60 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Faz 8: eski ikon (koyu zemin + düz bir onay işareti) çok jenerik
+         duruyordu, herhangi bir "check" ikonuyla karışabilirdi. Bir
+         TO-DO LİSTESİ olduğunu anlatmıyordu. Yeni tasarım: sağ üst köşesi
+         kıvrılmış bir "not kağıdı" (liste hissi), içinde üç kısa çizgi
+         (görev satırları), sağ altta markanın mercan rengiyle bir
+         "tamamlandı" rozeti. Üçü de elden çizildi, hazır bir ikon paketi
+         kullanılmadı (kütüphane kullanmama kararımıza uygun). Adaptive icon'un
+         güvenli alanı (sistem tarafından kırpılmadan görünen orta bölge,
+         ~66dp çap) merkeze göre hesaba katıldı. -->
+
+    <!-- Not kağıdı: sağ üst köşesi diyagonal kesilmiş bir dörtgen. -->
+    <path
+        android:fillColor="#FDFBF6"
+        android:pathData="M28,22 L68,22 L80,34 L80,86 L28,86 Z" />
+
+    <!-- Kıvrılan köşenin gölgesi: kağıdın "katlanmış" hissini veren küçük
+         bir üçgen, kağıdın kendisinden biraz daha koyu bir krem tonu. -->
+    <path
+        android:fillColor="#E4E0D3"
+        android:pathData="M68,22 L80,34 L68,34 Z" />
+
+    <!-- Üç görev satırı çizgisi. -->
+    <path
+        android:strokeColor="#2F5D50"
+        android:strokeWidth="4.2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M37,44 L64,44" />
+    <path
+        android:strokeColor="#2F5D50"
+        android:strokeWidth="4.2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M37,56 L64,56" />
+    <path
+        android:strokeColor="#2F5D50"
+        android:strokeWidth="4.2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M37,68 L54,68" />
+
+    <!-- Sağ altta "tamamlandı" rozeti: mercan renkli dolgun bir daire. -->
+    <path
+        android:fillColor="#E8735C"
+        android:pathData="M61,74 a13,13 0 1,0 26,0 a13,13 0 1,0 -26,0" />
+
+    <!-- Rozetin içindeki küçük onay işareti. -->
+    <path
+        android:strokeColor="#FDFBF6"
+        android:strokeWidth="3.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000"
+        android:pathData="M67,75 L71,80 L82,68" />
+</vector>

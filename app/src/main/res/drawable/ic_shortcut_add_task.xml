@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App Shortcuts (Faz 12a) için statik ikon: Compose'un ImageVector
+     sistemiyle DEĞİL, klasik Android VectorDrawable XML formatıyla, çünkü
+     manifest/shortcuts.xml gibi Compose'un dışındaki yerler sadece @drawable
+     kaynaklarını tanıyor. Marka rengiyle (teal) dolgulu bir daire + beyaz
+     bir artı işareti. HomeLogo'nun rozet dilinin statik bir yansıması. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF2F5D50"
+        android:pathData="M12,2 A10,10 0 1,0 12.01,2 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M11,7 L13,7 L13,11 L17,11 L17,13 L13,13 L13,17 L11,17 L11,13 L7,13 L7,11 L11,11 Z" />
+</vector>

@@ -1,0 +1,23 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+/app/build
+*.hprof
+.kotlin/
+
+# Yapımı gerekli olmayan, sadece kişisel çalışma notları
+/plan/
+/rehber/
+/changelog/
+/sürümler/
+/proje_notlari.txt
+/teknoloji-yigini.md
+/roadmap.md
+/*.png
+.claude/

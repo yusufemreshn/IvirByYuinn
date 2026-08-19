@@ -1,0 +1,362 @@
+<resources>
+    <string name="app_name">Ivır</string>
+
+    <!-- res/xml/shortcuts.xml -->
+    <string name="shortcut_add_task_short">Yeni görev</string>
+    <string name="shortcut_add_task_long">Yeni görev ekle</string>
+
+    <!-- Paylaşılan / genel butonlar -->
+    <string name="action_cancel">Vazgeç</string>
+    <string name="action_create">Oluştur</string>
+    <string name="action_close_cd">Kapat</string>
+    <string name="action_ok">Tamam</string>
+    <string name="action_clear">Temizle</string>
+    <string name="action_yes">Evet</string>
+    <string name="action_no">Hayır</string>
+    <string name="menu_cd">Menü</string>
+    <string name="action_move_up">Yukarı taşı</string>
+    <string name="action_move_down">Aşağı taşı</string>
+    <string name="action_archive">Arşivle</string>
+    <string name="action_unarchive">Aktif et</string>
+    <string name="list_options_cd">Liste seçenekleri</string>
+
+    <!-- ui/task/TaskListScreen: Faz 12c toplu seçim -->
+    <string name="exit_selection_cd">Seçimi kapat</string>
+    <string name="bulk_complete_cd">Seçilenleri tamamla</string>
+    <string name="bulk_delete_cd">Seçilenleri sil</string>
+    <plurals name="selection_count">
+        <item quantity="one">%d seçili</item>
+        <item quantity="other">%d seçili</item>
+    </plurals>
+
+    <!-- ui/home/HomeScreen -->
+    <string name="home_tagline">Görevlerini düzenli tut</string>
+    <string name="home_enter_app">Uygulamaya Gir</string>
+    <string name="home_exit">Çıkış</string>
+    <!-- Türkçe'de sayıdan sonraki isim çekim almadığı için "one"/"other" aynı metin -->
+    <plurals name="home_active_tasks_summary">
+        <item quantity="one">%d görev seni bekliyor</item>
+        <item quantity="other">%d görev seni bekliyor</item>
+    </plurals>
+
+    <!-- ui/task/AppDrawerContent: Faz 12a akıllı listeler -->
+    <string name="smart_view_today">Bugün</string>
+    <string name="smart_view_upcoming">Yaklaşan</string>
+    <string name="smart_view_overdue">Süresi geçmiş</string>
+
+    <!-- ui/task/AppDrawerContent + ArchivedListsScreen: Faz 12b liste arşivleme -->
+    <string name="switcher_archived_lists">Arşivlenmiş listeler</string>
+    <string name="archived_lists_title">Arşivlenmiş listeler</string>
+    <string name="archived_lists_empty">Henüz arşivlenmiş bir listen yok</string>
+    <string name="task_list_unarchived_snackbar">"%1$s" aktif edildi</string>
+
+    <!-- ui/task/TaskListSwitcher -->
+    <string name="drawer_lists_section_title">Listeler</string>
+    <string name="switcher_new_list">Yeni liste oluştur</string>
+    <string name="switcher_trash">Çöp kutusu</string>
+    <string name="switcher_calendar">Takvim</string>
+    <string name="switcher_stats">İstatistikler</string>
+    <string name="switcher_settings">Ayarlar</string>
+    <string name="switcher_categories">Kategoriler</string>
+    <string name="switcher_task_archive">Arşiv</string>
+    <string name="new_list_dialog_title">Yeni liste</string>
+    <string name="new_list_name_label">Liste adı</string>
+
+    <!-- ui/task/CategoryManagementScreen -->
+    <string name="categories_title">Kategoriler</string>
+    <string name="categories_empty">Henüz hiç kategori yok</string>
+    <string name="add_category_cd">Yeni kategori ekle</string>
+    <string name="delete_category_cd">Kategoriyi sil</string>
+    <string name="category_added_snackbar">"%1$s" kategorisi eklendi</string>
+    <string name="category_deleted_snackbar">"%1$s" kategorisi silindi</string>
+
+    <!-- ui/task/TaskListScreen -->
+    <string name="task_deleted_snackbar">"%1$s" çöp kutusuna taşındı</string>
+    <string name="action_undo">Geri Al</string>
+    <string name="add_task_fab_cd">Yeni görev ekle</string>
+    <string name="exit_confirm_title">Uygulamadan çık</string>
+    <string name="exit_confirm_message">Uygulamayı kapatmak istediğine emin misin?</string>
+    <string name="task_added_snackbar">"%1$s" eklendi</string>
+    <string name="task_updated_snackbar">"%1$s" güncellendi</string>
+    <string name="task_list_added_snackbar">"%1$s" listesi oluşturuldu</string>
+    <string name="task_list_deleted_snackbar">"%1$s" listesi silindi</string>
+    <string name="task_list_archived_snackbar">"%1$s" arşivlendi</string>
+    <!-- Türkçe'de sayıdan sonraki isim çekim almadığı için "one"/"other" aynı metin -->
+    <plurals name="bulk_completed_snackbar">
+        <item quantity="one">%d görev tamamlandı</item>
+        <item quantity="other">%d görev tamamlandı</item>
+    </plurals>
+    <plurals name="bulk_deleted_snackbar">
+        <item quantity="one">%d görev çöp kutusuna taşındı</item>
+        <item quantity="other">%d görev çöp kutusuna taşındı</item>
+    </plurals>
+
+    <!-- ui/task/TaskRow -->
+    <string name="recurrence_short_daily">↻ Her gün</string>
+    <string name="recurrence_short_weekly">↻ Her hafta</string>
+    <string name="recurrence_short_monthly">↻ Her ay</string>
+    <string name="delete_task_cd">Görevi sil</string>
+    <string name="drag_handle_cd">Sürükleme tutamacı</string>
+
+    <!-- ui/task/EmptyTaskList -->
+    <string name="empty_list_title">Henüz hiç görevin yok</string>
+    <string name="empty_list_subtitle">Aklına takılan ilk şeyi aşağıdaki + butonuyla ekle, buradan takip edelim.</string>
+    <string name="empty_search_title">Bu aramayla eşleşen görev yok</string>
+    <string name="empty_search_subtitle">Farklı bir kelime dene ya da aramayı temizle.</string>
+    <string name="empty_search_clear_action">Aramayı temizle</string>
+    <string name="empty_filter_title">Bu kategoride görev yok</string>
+    <string name="empty_filter_subtitle">Başka bir kategori seç ya da filtreyi kaldır.</string>
+    <string name="empty_filter_clear_action">Filtreyi kaldır</string>
+
+    <!-- ui/task/TaskEditorSheet: Faz 12a şablonlar -->
+    <string name="templates_label">Şablonlar</string>
+    <string name="delete_template_cd">Şablonu sil</string>
+    <string name="save_as_template">Şablon olarak kaydet</string>
+    <string name="template_saved_snackbar">"%1$s" şablon olarak kaydedildi</string>
+    <string name="template_deleted_snackbar">"%1$s" şablonu silindi</string>
+
+    <!-- ui/task/TaskEditorSheet: Faz 12a doğal dil tarih önerisi -->
+    <string name="date_suggestion_action">%1$s olarak ayarla</string>
+    <string name="date_suggestion_dismiss">Yoksay</string>
+
+    <!-- ui/task/SearchAndFilterBar -->
+    <string name="sort_newest">En yeni</string>
+    <string name="sort_priority">Önceliğe göre</string>
+    <string name="sort_alphabetical">A-Z</string>
+    <string name="sort_manual">Elle (sürükle)</string>
+    <string name="search_placeholder">Görevlerde ara...</string>
+    <string name="filter_all">Tümü</string>
+
+    <!-- ui/task/TaskEditorSheet -->
+    <string name="new_task_title">Yeni görev</string>
+    <string name="edit_task_title">Görevi düzenle</string>
+    <string name="task_title_field_label">Ne yapman gerekiyor?</string>
+    <string name="voice_input_cd">Sesle söyle</string>
+    <string name="voice_input_unavailable">Bu cihazda ses tanıma kullanılamıyor</string>
+    <string name="duplicate_task_title_message">Bu listede aynı isimde bir görev zaten var</string>
+    <string name="priority_label">Öncelik</string>
+    <string name="category_label">Kategori</string>
+    <string name="option_none">Yok</string>
+    <string name="category_add_new">+ Yeni</string>
+    <string name="due_date_label">Son tarih</string>
+    <string name="due_date_add">Tarih/saat ekle</string>
+    <string name="recurrence_label">Tekrar</string>
+    <string name="note_label">Not (opsiyonel)</string>
+    <string name="action_add">Ekle</string>
+    <string name="action_save">Kaydet</string>
+    <string name="action_next">İleri</string>
+    <string name="exact_alarm_title">Tam zamanlı hatırlatma izni</string>
+    <string name="exact_alarm_text">Bu görevi tam belirttiğin saatte hatırlatabilmemiz için sistem ayarlarından "Alarmlar ve hatırlatıcılar" iznini açman gerekiyor. İstemezsen görev yine kaydedilir, sadece tam zamanında bildirim gelmeyebilir.</string>
+    <string name="go_to_settings">Ayarlara git</string>
+    <string name="not_now">Şimdi değil</string>
+    <string name="recurrence_daily">Her gün</string>
+    <string name="recurrence_weekly">Her hafta</string>
+    <string name="recurrence_monthly">Her ay</string>
+    <string name="priority_low">Düşük</string>
+    <string name="priority_medium">Orta</string>
+    <string name="priority_high">Yüksek</string>
+    <string name="new_category_title">Yeni kategori</string>
+    <string name="category_name_label">Kategori adı</string>
+    <string name="subtasks_label">Alt görevler</string>
+    <string name="delete_subtask_cd">Alt görevi sil</string>
+    <string name="new_subtask_label">Yeni alt görev</string>
+    <string name="add_subtask_cd">Alt görev ekle</string>
+
+    <!-- ui/task/TrashScreen -->
+    <string name="trash_title">Çöp kutusu</string>
+    <string name="trash_empty">Çöp kutusu boş</string>
+    <string name="action_restore">Geri yükle</string>
+    <string name="permanently_delete_cd">Kalıcı olarak sil</string>
+    <string name="permanently_delete_confirm">"%1$s" bir daha geri alınamayacak şekilde silinecek. Emin misin?</string>
+    <string name="action_delete">Sil</string>
+    <string name="delete_all_cd">Tümünü sil</string>
+    <string name="task_restored_snackbar">"%1$s" geri yüklendi</string>
+    <string name="task_permanently_deleted_snackbar">"%1$s" kalıcı olarak silindi</string>
+    <string name="trash_emptied_snackbar">Çöp kutusu boşaltıldı</string>
+
+    <!-- ui/task/ArchiveScreen -->
+    <string name="archive_title">Arşiv</string>
+    <string name="archive_empty">Arşiv boş</string>
+    <string name="archive_task_cd">Görevi arşivle</string>
+    <string name="action_unarchive_task">Arşivden çıkar</string>
+    <string name="task_archived_snackbar">"%1$s" arşivlendi</string>
+    <string name="task_unarchived_snackbar">"%1$s" arşivden çıkarıldı</string>
+
+    <!-- ui/util/ConfirmDeleteDialog: genel "silmeden önce onay" metinleri -->
+    <string name="confirm_delete_task_title">Görevi sil</string>
+    <string name="confirm_delete_task_message">"%1$s" görevi çöp kutusuna taşınacak. Emin misin?</string>
+    <string name="confirm_complete_title">Görevi tamamla</string>
+    <string name="confirm_complete_message">"%1$s" görevi tamamlandı olarak işaretlenecek. Emin misin?</string>
+    <string name="confirm_uncomplete_title">Tamamlanmadı olarak işaretle</string>
+    <string name="confirm_uncomplete_message">"%1$s" görevi tamamlanmadı olarak işaretlenecek. Emin misin?</string>
+    <string name="confirm_archive_task_title">Görevi arşivle</string>
+    <string name="confirm_archive_task_message">"%1$s" arşive taşınacak. Emin misin?</string>
+    <string name="confirm_bulk_delete_title">Görevleri sil</string>
+    <string name="confirm_bulk_delete_message">Seçili %1$d görev çöp kutusuna taşınacak. Emin misin?</string>
+    <string name="confirm_delete_category_title">Kategoriyi sil</string>
+    <string name="confirm_delete_category_message">"%1$s" kategorisi silinecek. Bu kategoriyi kullanan görevler silinmez, sadece kategorisiz kalır. Emin misin?</string>
+    <string name="confirm_delete_template_title">Şablonu sil</string>
+    <string name="confirm_delete_template_message">"%1$s" şablonu silinecek. Emin misin?</string>
+    <string name="confirm_delete_subtask_title">Alt görevi sil</string>
+    <string name="confirm_delete_subtask_message">"%1$s" alt görevi silinecek. Emin misin?</string>
+    <string name="confirm_complete_subtask_title">Alt görevi tamamla</string>
+    <string name="confirm_complete_subtask_message">"%1$s" alt görevi tamamlandı olarak işaretlenecek. Emin misin?</string>
+    <string name="confirm_uncomplete_subtask_title">Alt görevi tamamlanmadı olarak işaretle</string>
+    <string name="confirm_uncomplete_subtask_message">"%1$s" alt görevi tamamlanmadı olarak işaretlenecek. Emin misin?</string>
+    <string name="confirm_add_subtask_title">Alt görev ekle</string>
+    <string name="confirm_add_subtask_message">"%1$s" alt görevi eklenecek. Emin misin?</string>
+    <string name="confirm_delete_list_title">Listeyi sil</string>
+    <string name="confirm_delete_list_message">"%1$s" listesi ve İÇİNDEKİ TÜM GÖREVLER kalıcı olarak silinecek. Çöp kutusuna taşınmaz, geri alınamaz. Emin misin?</string>
+    <string name="confirm_delete_all_title">Çöp kutusunu boşalt</string>
+    <string name="confirm_delete_all_message">Çöp kutusundaki tüm görevler bir daha geri alınamayacak şekilde kalıcı olarak silinecek. Emin misin?</string>
+    <string name="cannot_delete_last_list">Son listeyi silemezsin, en az bir liste kalmalı</string>
+
+    <!-- ui/task/CalendarScreen -->
+    <string name="calendar_title">Takvim</string>
+    <string name="calendar_previous_month_cd">Önceki ay</string>
+    <string name="calendar_next_month_cd">Sonraki ay</string>
+    <string name="day_monday_short">Pt</string>
+    <string name="day_tuesday_short">Sa</string>
+    <string name="day_wednesday_short">Ça</string>
+    <string name="day_thursday_short">Pe</string>
+    <string name="day_friday_short">Cu</string>
+    <string name="day_saturday_short">Ct</string>
+    <string name="day_sunday_short">Pz</string>
+    <string name="calendar_tap_prompt">Görevlerini görmek için bir güne dokun</string>
+    <!-- 2026-08-11: artık sadece son tarih değil, tamamlanma günü de -->
+    <string name="calendar_no_tasks_day">Bu günde son tarihi olan ya da tamamlanan görev yok</string>
+    <string name="calendar_completed_on_this_day_cd">Bu gün tamamlandı</string>
+
+    <!-- ui/stats/StatsScreen -->
+    <string name="stats_title">İstatistikler</string>
+    <string name="stats_last_7_days">Son 7 gün</string>
+    <string name="streak_zero">Henüz bir seri yok. Bugün bir görev tamamlayarak başla</string>
+    <string name="streak_one">1 gündür ardışık görev tamamlıyorsun</string>
+    <string name="streak_many">%1$d gündür ardışık görev tamamlıyorsun</string>
+
+    <!-- ui/theme/ThemeToggleButton -->
+    <string name="theme_system">Sistem</string>
+    <string name="theme_light">Açık</string>
+    <string name="theme_dark">Koyu</string>
+
+    <!-- ui/theme/AppColorTheme seçenekleri (Ayarlar > Renk Teması) -->
+    <string name="color_theme_title">Renk Teması</string>
+    <string name="color_theme_subtitle">Uygulamanın ana rengini seç. Açık/Koyu modundan bağımsız çalışır.</string>
+    <string name="color_theme_dynamic">Duvar Kağıdım</string>
+    <string name="color_theme_teal">Teal (Klasik)</string>
+    <string name="color_theme_ocean">Okyanus</string>
+    <string name="color_theme_sunset">Gün Batımı</string>
+    <string name="color_theme_forest">Orman</string>
+    <string name="color_theme_lavender">Lavanta</string>
+    <string name="color_theme_rose">Gül</string>
+    <string name="color_theme_mint">Nane</string>
+    <string name="color_theme_amber">Kehribar</string>
+    <string name="color_theme_coral">Mercan</string>
+    <string name="color_theme_indigo">İndigo</string>
+    <string name="color_theme_emerald">Zümrüt</string>
+    <string name="color_theme_plum">Erik</string>
+    <string name="color_theme_slate">Arduvaz</string>
+    <string name="color_theme_peach">Şeftali</string>
+    <string name="color_theme_sky">Gökyüzü</string>
+    <string name="color_theme_ruby">Yakut</string>
+    <string name="color_theme_olive">Zeytin</string>
+    <string name="color_theme_mocha">Mokka</string>
+    <string name="color_theme_lilac">Lila</string>
+    <string name="color_theme_cherry_blossom">Kiraz Çiçeği</string>
+    <string name="color_theme_charcoal">Kömür</string>
+    <string name="color_theme_turquoise">Turkuaz</string>
+
+    <!-- ui/settings/SettingsScreen -->
+    <string name="settings_title">Ayarlar</string>
+    <string name="data_management_title">Veri Yönetimi</string>
+    <string name="data_management_subtitle">Tüm listelerini, görevlerini ve istatistik geçmişini tek bir dosyaya kaydet, istersen sonra aynı dosyadan geri yükle.</string>
+    <string name="export_backup">Yedeği Dışa Aktar</string>
+    <string name="import_backup">Yedekten Geri Yükle</string>
+    <string name="restore_warning_title">Yedekten geri yükle</string>
+    <string name="restore_warning_text">Bu işlem, cihazındaki TÜM görev/liste/kategori verilerinin yerine seçeceğin yedek dosyasındaki verileri yazacak. Şu anki veriler kaybolur. Emin misin?</string>
+    <string name="action_proceed">Devam et</string>
+    <string name="backup_saved">Yedek başarıyla kaydedildi</string>
+    <string name="backup_save_failed">Yedek kaydedilemedi</string>
+    <string name="file_read_failed">Dosya okunamadı</string>
+    <string name="backup_restored">Yedek geri yüklendi</string>
+    <string name="backup_invalid">Bu geçerli bir yedek dosyası değil</string>
+    <string name="security_title">Güvenlik</string>
+    <string name="app_lock_title">Uygulama Kilidi</string>
+    <string name="app_lock_subtitle">Açıkken, uygulama arka plandan her dönüşünde PIN (ya da parmak izi) isteniyor.</string>
+    <string name="home_screen_setting_title">Giriş Ekranı</string>
+    <string name="home_screen_setting_row_title">Başlangıç ekranını göster</string>
+    <string name="home_screen_setting_subtitle">Açıkken, uygulama her açıldığında önce "Uygulamaya Gir/Ayarlar/Çıkış" ekranı gösterilir. Kapatırsan uygulama direkt görev listesiyle açılır.</string>
+    <string name="new_pin_title">Yeni PIN belirle</string>
+    <string name="confirm_pin_title">PIN\'i tekrar gir</string>
+    <string name="pin_mismatch">PIN\'ler eşleşmedi, tekrar dene</string>
+    <string name="disable_lock_title">Kilidi kapatmak için PIN\'i gir</string>
+    <string name="wrong_pin">Yanlış PIN, tekrar dene</string>
+    <string name="language_title">Dil</string>
+    <string name="language_system">Sistem</string>
+    <string name="language_turkish">Türkçe</string>
+    <string name="language_english">English</string>
+
+    <!-- ui/settings/SettingsScreen: Yazı Boyutu (2026-08-09) -->
+    <string name="font_size_title">Yazı Boyutu</string>
+    <string name="font_size_subtitle">Uygulama içindeki tüm yazıların boyutunu ayarla. Telefonunun genel yazı tipi ayarından bağımsız çalışır.</string>
+    <string name="font_size_small">Küçük</string>
+    <string name="font_size_medium">Orta</string>
+    <string name="font_size_large">Büyük</string>
+
+    <!-- ui/settings/SettingsScreen: Faz 12b Bildirimler bölümü -->
+    <string name="notifications_title">Bildirimler</string>
+    <string name="quiet_hours_title">Sessiz saatler</string>
+    <string name="quiet_hours_subtitle">Bu saatler arasındaki hatırlatmalar pencerenin bitişine ertelenir.</string>
+    <string name="weekly_digest_setting_title">Haftalık özet</string>
+    <string name="weekly_digest_setting_subtitle">Haftada bir, tamamladığın görev sayısını (ya da uzun süredir uğramadıysan bir hatırlatma) bildir.</string>
+
+    <!-- ui/settings/SettingsScreen: Hakkında bölümü -->
+    <string name="about_title">Hakkında</string>
+    <string name="about_version">Sürüm %1$s</string>
+    <string name="about_developer_label">Geliştirici</string>
+    <string name="about_license_text">Bu uygulama tamamen resmi Android Jetpack/AndroidX kütüphaneleriyle (Apache License 2.0) yazılmıştır. Üçüncü parti bir kütüphane veya varlık (ikon, font, ses) kullanılmamıştır, bu yüzden ayrıca bir lisans bildirimi gerekmiyor.</string>
+
+    <!-- ui/lock -->
+    <string name="app_locked_title">Uygulama kilitli</string>
+    <string name="unlock_with_biometric">Parmak izi ile aç</string>
+    <string name="biometric_prompt_title">Kilidi aç</string>
+    <string name="biometric_use_pin">PIN kullan</string>
+    <string name="pin_backspace_cd">Bir hane sil</string>
+    <string name="pin_entry_dismiss_cd">Vazgeç</string>
+
+    <!-- notification/ -->
+    <string name="reminder_channel_name">Görev hatırlatmaları</string>
+    <string name="reminder_channel_description">Bir görevin son tarihi geldiğinde gösterilen hatırlatmalar</string>
+    <string name="reminder_notification_title">Hatırlatma</string>
+    <string name="reminder_action_snooze">Ertele</string>
+    <string name="reminder_action_complete">Tamamla</string>
+    <string name="weekly_digest_channel_name">Haftalık özet</string>
+    <string name="weekly_digest_channel_description">Haftalık tamamlanan görev özeti ve hatırlatma bildirimi</string>
+    <string name="weekly_digest_title">Haftalık özet</string>
+    <string name="weekly_digest_summary">Bu hafta %1$d görev tamamladın</string>
+    <string name="weekly_digest_reengagement">Bu hafta hiç görev tamamlamadın, göz atmaya ne dersin?</string>
+    <string name="focus_channel_name">Odak modu</string>
+    <string name="focus_channel_description">Odak modu çalışma/mola sürelerinin bittiğini bildirir</string>
+
+    <!-- ui/focus/FocusModeScreen: Faz 12c odak modu -->
+    <string name="switcher_focus_mode">Odak modu</string>
+    <string name="focus_mode_title">Odak modu</string>
+    <string name="focus_phase_idle">Başlamaya hazır</string>
+    <string name="focus_phase_work">Çalışma zamanı</string>
+    <string name="focus_phase_break">Mola zamanı</string>
+    <string name="focus_start">Başlat</string>
+    <string name="focus_pause">Duraklat</string>
+    <string name="focus_resume">Devam et</string>
+    <string name="focus_reset">Sıfırla</string>
+    <string name="focus_work_complete_title">Çalışma bitti</string>
+    <string name="focus_work_complete_text">%1$d dakikalık mola zamanı</string>
+    <string name="focus_break_complete_title">Mola bitti</string>
+    <string name="focus_break_complete_text">Hazır olduğunda yeni bir odak seansı başlatabilirsin</string>
+    <string name="focus_duration_hint_idle">Süreyi değiştirmek için dokun</string>
+    <string name="focus_duration_hint_editing">Ayarlamak için yukarı/aşağı sürükle</string>
+    <string name="focus_save_duration">Kaydet</string>
+
+    <!-- widget/ -->
+    <string name="widget_no_tasks">Bekleyen görevin yok, harika!</string>
+    <string name="quick_add_tile_label">Hızlı görev ekle</string>
+</resources>

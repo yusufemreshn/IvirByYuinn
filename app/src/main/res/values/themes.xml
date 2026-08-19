@@ -1,0 +1,7 @@
+<resources>
+    <!-- Bu, Compose devreye girmeden önce Android'in sistem seviyesinde kullandığı
+         "iskelet" tema. Gerçek renk/tipografi kararlarını Kotlin tarafında
+         (ui/theme/Theme.kt) Material3 ile veriyoruz, burada sadece action bar'ı
+         kapatıp Compose'a alan açıyoruz. -->
+    <style name="Theme.Ivir" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

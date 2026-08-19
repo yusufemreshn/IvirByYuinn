@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Faz 12a: launcher ikonuna uzun basınca çıkan statik kısayol(lar).
+     Resmi ShortcutManager XML sistemi, yeni bağımlılık yok. targetClass
+     MainActivity'yi AÇAR ama normal açılıştan farklı bir "action" ile.
+     Extras yerine action kullanıyoruz çünkü statik (XML) kısayollarda
+     <intent> elemanının resmi olarak desteklediği alanlar action/data/
+     targetPackage/targetClass; extra'ların statik kısayollarda güvenilir
+     desteklendiğine dair net bir garanti yok, action ise kesin destekleniyor. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="add_task"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_add_task"
+        android:shortcutShortLabel="@string/shortcut_add_task_short"
+        android:shortcutLongLabel="@string/shortcut_add_task_long">
+        <intent
+            android:action="com.yusufemre.ivirbyyuinn.action.ADD_TASK"
+            android:targetPackage="com.yusufemre.ivirbyyuinn"
+            android:targetClass="com.yusufemre.ivirbyyuinn.MainActivity" />
+    </shortcut>
+</shortcuts>

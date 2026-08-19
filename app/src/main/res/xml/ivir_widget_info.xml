@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Studio'nun widget sihirbazının ürettiği tipik bir dosya:
+     boyut/güncelleme aralığı gibi sistemin bilmesi gereken meta veriler.
+     Gerçek görünüm burada değil, Glance composable'larında (IvirWidget.kt).
+
+     updatePeriodMillis=1800000 (30 dakika): Android zaten bundan daha sık
+     güncellemeyi reddedip 30 dakikaya yuvarlıyor (sistemin kendi sınırı).
+     Görevi tamamlar tamamlamaz widget'ın anında güncellenmesini
+     istiyorsak (ileride) her UseCase'den GlanceAppWidget.update()
+     çağırmamız gerekir, şimdilik bu kadarını yeterli gördük. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="180dp"
+    android:minHeight="110dp"
+    android:targetCellWidth="3"
+    android:targetCellHeight="2"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:updatePeriodMillis="1800000" />

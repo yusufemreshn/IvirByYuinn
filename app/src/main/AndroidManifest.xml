@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Android 13+'ta bildirim göstermek için runtime izin gerekiyor,
+         MainActivity açılışta bunu istiyor. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Android 12+'ta tam zamanlı alarm kurmak (setExactAndAllowWhileIdle)
+         için gereken izin. Kullanıcı bunu sistem ayarlarından ayrıca
+         açıyor, biz sadece "izin var mı" diye soruyoruz ve yoksa
+         yönlendiriyoruz. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Cihaz yeniden başladığında hatırlatmaları yeniden kurabilmek için. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:name=".IvirApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Ivir"
+        android:enableOnBackInvokedCallback="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Ivir">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Faz 12a: App Shortcuts (res/xml/shortcuts.xml), launcher
+                 ikonuna uzun basınca "Yeni görev" kısayolunun bu action'ı
+                 tetikleyebilmesi için. -->
+            <intent-filter>
+                <action android:name="com.yusufemre.ivirbyyuinn.action.ADD_TASK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- Faz 12b: başka bir uygulamanın paylaşım sayfasından
+                 ("Paylaş" > IvırByYuinn) düz metin gönderilebilsin diye. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+
+        <!-- exported=false: bu receiver'ı sadece biz, kendi PendingIntent'imizle
+             tetikliyoruz, dışarıdan (başka bir uygulamadan) tetiklenmesin. -->
+        <receiver
+            android:name=".notification.TaskReminderReceiver"
+            android:exported="false" />
+
+        <!-- Faz 12b: bildirimdeki Ertele/Tamamla butonları. -->
+        <receiver
+            android:name=".notification.TaskReminderActionReceiver"
+            android:exported="false" />
+
+        <!-- BOOT_COMPLETED sistemin gönderdiği bir yayın olduğu için bu
+             receiver'ın exported=true olması gerekiyor, ama sadece
+             android.intent.action.BOOT_COMPLETED'ı dinliyor. -->
+        <receiver
+            android:name=".notification.BootCompletedReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Ana ekran widget'ı. exported=false yeterli çünkü sistem bunu
+             zaten APPWIDGET_UPDATE üzerinden, uygulamamız adına tetikliyor. -->
+        <receiver
+            android:name=".widget.IvirWidgetReceiver"
+            android:exported="false"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/ivir_widget_info" />
+        </receiver>
+
+        <!-- Quick Settings tile. android:permission burada BİZİM verdiğimiz
+             bir izin değil, sistemin kendi imzalı izni; sadece Sistem UI'nin
+             bu servise bağlanabilmesini garanti ediyor, başka hiçbir uygulama
+             bağlanamaz. -->
+        <service
+            android:name=".widget.QuickAddTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:label="@string/quick_add_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

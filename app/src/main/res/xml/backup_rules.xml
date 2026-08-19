@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12'den eski cihazlarda otomatik yedeklemenin neyi kapsayacağını
+     burada belirliyoruz. Room veritabanımız gelince (Faz 1) burayı dolduracağız,
+     şu an yedeklenecek özel bir şey olmadığı için boş bırakıyoruz. -->
+<full-backup-content>
+</full-backup-content>

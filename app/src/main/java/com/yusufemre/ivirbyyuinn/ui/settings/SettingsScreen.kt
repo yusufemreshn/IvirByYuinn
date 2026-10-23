@@ -82,11 +82,13 @@ import com.yusufemre.ivirbyyuinn.ui.theme.FontScaleViewModel
 import com.yusufemre.ivirbyyuinn.ui.theme.FontScaleViewModelFactory
 import com.yusufemre.ivirbyyuinn.ui.theme.label
 import com.yusufemre.ivirbyyuinn.ui.theme.swatchColor
+import com.yusufemre.ivirbyyuinn.ui.util.AnimatedDialog
 import com.yusufemre.ivirbyyuinn.ui.util.findActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 // Navigation kütüphanesi olmadığı için diğer alt ekranlar gibi
@@ -174,10 +176,30 @@ fun SettingsScreen(onClose: () -> Unit) {
     )
     val weeklyDigestOptedIn by weeklyDigestViewModel.optedIn.collectAsStateWithLifecycle()
 
+    // Google Drive yedekleme, Veri Yönetimi kartındaki yerel dosya
+    // yedeklemenin (export/importBackup) YANINDA, ayrı bir hedef.
+    val googleDriveViewModel: GoogleDriveViewModel = viewModel(
+        factory = GoogleDriveViewModelFactory(
+            getGoogleDriveSignInIntentUseCase = application.getGoogleDriveSignInIntentUseCase,
+            completeGoogleDriveSignInUseCase = application.completeGoogleDriveSignInUseCase,
+            getGoogleDriveAccountEmailUseCase = application.getGoogleDriveAccountEmailUseCase,
+            signOutGoogleDriveUseCase = application.signOutGoogleDriveUseCase,
+            uploadBackupToDriveUseCase = application.uploadBackupToDriveUseCase,
+            restoreBackupFromDriveUseCase = application.restoreBackupFromDriveUseCase,
+            getGoogleDriveBackupPreferencesUseCase = application.getGoogleDriveBackupPreferencesUseCase,
+            setGoogleDriveAutoBackupEnabledUseCase = application.setGoogleDriveAutoBackupEnabledUseCase,
+        ),
+    )
+    val driveAccountEmail by googleDriveViewModel.accountEmail.collectAsStateWithLifecycle()
+    val driveBackupPreferences by googleDriveViewModel.backupPreferences.collectAsStateWithLifecycle()
+    val lastBackupFormatter = remember { SimpleDateFormat("d MMM yyyy, HH:mm", Locale.getDefault()) }
+
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var showRestoreWarning by remember { mutableStateOf(false) }
+    var showDriveRestoreWarning by remember { mutableStateOf(false) }
+    var showConfirmationSettings by remember { mutableStateOf(false) }
     var lockFlowStep by remember { mutableStateOf<LockFlowStep?>(null) }
     var lockFlowError by remember { mutableStateOf<String?>(null) }
 
@@ -188,6 +210,20 @@ fun SettingsScreen(onClose: () -> Unit) {
     val backupInvalidMessage = stringResource(R.string.backup_invalid)
     val pinMismatchMessage = stringResource(R.string.pin_mismatch)
     val wrongPinMessage = stringResource(R.string.wrong_pin)
+    val driveSignInFailedMessage = stringResource(R.string.google_drive_sign_in_failed)
+    val driveBackupSuccessMessage = stringResource(R.string.google_drive_backup_success)
+    val driveBackupFailedMessage = stringResource(R.string.google_drive_backup_failed)
+    val driveRestoreSuccessMessage = stringResource(R.string.google_drive_restore_success)
+    val driveRestoreFailedMessage = stringResource(R.string.google_drive_restore_failed)
+
+    val driveSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
+        googleDriveViewModel.onSignInResult(result.data)
+        if (googleDriveViewModel.accountEmail.value == null) {
+            coroutineScope.launch { snackbarHostState.showSnackbar(driveSignInFailedMessage) }
+        }
+    }
 
     // CreateDocument, kullanıcının "nereye kaydedeyim" diye seçtiği bir
     // Uri döndürüyor (ya da vazgeçerse null), dosyanın kendisini biz
@@ -272,6 +308,109 @@ fun SettingsScreen(onClose: () -> Unit) {
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 ) {
                     Text(stringResource(R.string.import_backup))
+                }
+            }
+
+            SettingsSectionCard {
+                Text(text = stringResource(R.string.google_drive_title), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = stringResource(R.string.google_drive_subtitle),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp, bottom = 16.dp),
+                )
+
+                if (driveAccountEmail == null) {
+                    Button(
+                        onClick = { driveSignInLauncher.launch(googleDriveViewModel.signInIntent()) },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(stringResource(R.string.google_drive_connect))
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.google_drive_connected_as, driveAccountEmail ?: ""),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 12.dp),
+                    )
+
+                    Button(
+                        onClick = {
+                            coroutineScope.launch {
+                                val result = googleDriveViewModel.uploadBackup()
+                                val message = if (result.isSuccess) driveBackupSuccessMessage else driveBackupFailedMessage
+                                snackbarHostState.showSnackbar(message)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(stringResource(R.string.google_drive_backup_now))
+                    }
+
+                    OutlinedButton(
+                        onClick = { showDriveRestoreWarning = true },
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    ) {
+                        Text(stringResource(R.string.google_drive_restore))
+                    }
+
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = stringResource(R.string.google_drive_auto_backup_title), style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                text = stringResource(R.string.google_drive_auto_backup_subtitle),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Switch(
+                            checked = driveBackupPreferences.autoBackupEnabled,
+                            onCheckedChange = { checked -> googleDriveViewModel.setAutoBackupEnabled(checked) },
+                        )
+                    }
+
+                    Text(
+                        text = driveBackupPreferences.lastBackupAtMillis?.let {
+                            stringResource(R.string.google_drive_last_backup, lastBackupFormatter.format(Date(it)))
+                        } ?: stringResource(R.string.google_drive_never_backed_up),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+
+                    TextButton(
+                        onClick = {
+                            googleDriveViewModel.signOut()
+                            googleDriveViewModel.setAutoBackupEnabled(false)
+                        },
+                        modifier = Modifier.padding(top = 4.dp),
+                    ) {
+                        Text(stringResource(R.string.google_drive_disconnect))
+                    }
+                }
+            }
+
+            SettingsSectionCard {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showConfirmationSettings = true },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(text = stringResource(R.string.confirmation_settings_row_title), style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            text = stringResource(R.string.confirmation_settings_row_subtitle),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    }
                 }
             }
 
@@ -465,6 +604,12 @@ fun SettingsScreen(onClose: () -> Unit) {
         }
     }
 
+    if (showConfirmationSettings) {
+        AnimatedDialog(onDismissRequest = { showConfirmationSettings = false }) { dismiss ->
+            ConfirmationSettingsScreen(onClose = dismiss)
+        }
+    }
+
     if (showRestoreWarning) {
         AlertDialog(
             onDismissRequest = { showRestoreWarning = false },
@@ -478,6 +623,30 @@ fun SettingsScreen(onClose: () -> Unit) {
             },
             dismissButton = {
                 TextButton(onClick = { showRestoreWarning = false }) { Text(stringResource(R.string.action_cancel)) }
+            },
+        )
+    }
+
+    if (showDriveRestoreWarning) {
+        // Metin olarak yerel geri yükleme uyarısıyla (restore_warning_title/
+        // text) AYNI: ikisi de "TÜM veri yerine yazılacak" riskini anlatıyor,
+        // ayrı bir string çifti açmaya gerek yok.
+        AlertDialog(
+            onDismissRequest = { showDriveRestoreWarning = false },
+            title = { Text(stringResource(R.string.restore_warning_title)) },
+            text = { Text(stringResource(R.string.restore_warning_text)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDriveRestoreWarning = false
+                    coroutineScope.launch {
+                        val result = googleDriveViewModel.restoreBackup()
+                        val message = if (result.isSuccess) driveRestoreSuccessMessage else driveRestoreFailedMessage
+                        snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Long)
+                    }
+                }) { Text(stringResource(R.string.action_proceed)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDriveRestoreWarning = false }) { Text(stringResource(R.string.action_cancel)) }
             },
         )
     }

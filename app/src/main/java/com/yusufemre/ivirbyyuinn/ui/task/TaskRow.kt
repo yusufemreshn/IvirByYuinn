@@ -132,6 +132,11 @@ fun TaskRow(
     onDelete: (Task) -> Unit,
     onArchive: (Task) -> Unit = {},
     onClick: (Task) -> Unit,
+    // Kullanıcı Ayarlar > Onay Mesajları'ndan bu onayları tek tek
+    // kapatabiliyor; false ise dialog hiç açılmadan işlem direkt yapılıyor.
+    confirmOnDelete: Boolean = true,
+    confirmOnComplete: Boolean = true,
+    confirmOnSubtaskComplete: Boolean = true,
     modifier: Modifier = Modifier,
     // Sadece SortOption.MANUAL seçiliyken dolu geliyor, TaskListScreen
     // buraya sürükleme algılamasını (pointerInput) zaten kurulu olarak
@@ -171,6 +176,17 @@ fun TaskRow(
     // isteğiyle (geri alınabilir bir işlem olsa da, yanlışlıkla basılmasın).
     var showArchiveConfirm by remember { mutableStateOf(false) }
 
+    // confirmOnDelete/confirmOnComplete false ise onay diyaloğu hiç
+    // açılmadan işlem direkt tetikleniyor; silme/tamamlamanın HER giriş
+    // noktası (sil butonu, swipe, checkbox) bu iki fonksiyonu çağırıyor,
+    // davranış tek bir yerden kontrol ediliyor.
+    val requestDelete = {
+        if (confirmOnDelete) showDeleteConfirm = true else onDelete(task)
+    }
+    val requestToggle = {
+        if (confirmOnComplete) showToggleConfirm = true else onToggleDone(task)
+    }
+
     // confirmValueChange bu Compose sürümünde deprecated işaretlenmiş
     // (yerine "dynamic anchors" tabanlı yeni bir API öneriliyor, henüz
     // dokümantasyonu/örnekleri olgunlaşmamış). Çalışması hâlâ doğru ve
@@ -186,7 +202,7 @@ fun TaskRow(
                     // zaman yerine geri dönüyor (false), gerçek değişiklik
                     // sadece kullanıcı onaylarsa oluyor.
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                    showToggleConfirm = true
+                    requestToggle()
                     false
                 }
                 SwipeToDismissBoxValue.EndToStart -> {
@@ -196,7 +212,7 @@ fun TaskRow(
                     // onaylarsa onDelete gerçek silmeyi tetikleyip satırı
                     // normal liste güncellemesiyle (animateItem) kaldırıyor.
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                    showDeleteConfirm = true
+                    requestDelete()
                     false
                 }
                 SwipeToDismissBoxValue.Settled -> false
@@ -277,6 +293,7 @@ fun TaskRow(
                     recurrenceDaily = recurrenceDaily,
                     recurrenceWeekly = recurrenceWeekly,
                     recurrenceMonthly = recurrenceMonthly,
+                    confirmOnSubtaskComplete = confirmOnSubtaskComplete,
                     modifier = Modifier.weight(1f).padding(start = 12.dp),
                 )
             }
@@ -355,7 +372,7 @@ fun TaskRow(
                         checked = task.isDone,
                         onCheckedChange = {
                             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                            showToggleConfirm = true
+                            requestToggle()
                         },
                     )
                     Box(
@@ -391,7 +408,7 @@ fun TaskRow(
                     }
                     IconButton(onClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        showDeleteConfirm = true
+                        requestDelete()
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -451,6 +468,7 @@ private fun TaskTitleColumn(
     recurrenceDaily: String,
     recurrenceWeekly: String,
     recurrenceMonthly: String,
+    confirmOnSubtaskComplete: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -485,7 +503,11 @@ private fun TaskTitleColumn(
         if (subtasks.isNotEmpty()) {
             Column(modifier = Modifier.padding(top = 2.dp)) {
                 subtasks.forEach { subtask ->
-                    SubtaskMiniRow(subtask = subtask, onToggleDone = onToggleSubtaskDone)
+                    SubtaskMiniRow(
+                        subtask = subtask,
+                        onToggleDone = onToggleSubtaskDone,
+                        confirmOnComplete = confirmOnSubtaskComplete,
+                    )
                 }
             }
         }
@@ -507,7 +529,7 @@ private fun TaskTitleColumn(
 // onay deseni: checkbox'a dokununca hemen işlem olmuyor, "emin misin"
 // diyaloğu açılıyor.
 @Composable
-private fun SubtaskMiniRow(subtask: Subtask, onToggleDone: (Subtask) -> Unit) {
+private fun SubtaskMiniRow(subtask: Subtask, onToggleDone: (Subtask) -> Unit, confirmOnComplete: Boolean = true) {
     val haptics = LocalHapticFeedback.current
     var showToggleConfirm by remember { mutableStateOf(false) }
 
@@ -517,7 +539,7 @@ private fun SubtaskMiniRow(subtask: Subtask, onToggleDone: (Subtask) -> Unit) {
                 checked = subtask.isDone,
                 onCheckedChange = {
                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                    showToggleConfirm = true
+                    if (confirmOnComplete) showToggleConfirm = true else onToggleDone(subtask)
                 },
                 modifier = Modifier.scale(0.6f),
             )

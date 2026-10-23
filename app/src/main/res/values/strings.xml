@@ -275,6 +275,24 @@
     <string name="restore_warning_title">Yedekten geri yükle</string>
     <string name="restore_warning_text">Bu işlem, cihazındaki TÜM görev/liste/kategori verilerinin yerine seçeceğin yedek dosyasındaki verileri yazacak. Şu anki veriler kaybolur. Emin misin?</string>
     <string name="action_proceed">Devam et</string>
+    <string name="confirmation_settings_row_title">Onay Mesajları</string>
+    <string name="confirmation_settings_row_subtitle">Görev/alt görev silme ve tamamlama onaylarını aç/kapat</string>
+    <string name="google_drive_title">Google Drive Yedekleme</string>
+    <string name="google_drive_subtitle">Yedeklerini Google Drive\'daki gizli bir alana otomatik ya da manuel olarak kaydet.</string>
+    <string name="google_drive_connect">Google ile bağlan</string>
+    <string name="google_drive_connected_as">Bağlı hesap: %1$s</string>
+    <string name="google_drive_disconnect">Hesabı kaldır</string>
+    <string name="google_drive_backup_now">Şimdi Drive\'a yedekle</string>
+    <string name="google_drive_restore">Drive\'dan geri yükle</string>
+    <string name="google_drive_auto_backup_title">Otomatik yedekleme</string>
+    <string name="google_drive_auto_backup_subtitle">Günde bir kez, Drive\'a otomatik yedek al.</string>
+    <string name="google_drive_last_backup">Son yedek: %1$s</string>
+    <string name="google_drive_never_backed_up">Henüz yedek alınmadı</string>
+    <string name="google_drive_backup_success">Drive\'a yedeklendi</string>
+    <string name="google_drive_backup_failed">Drive\'a yedeklenemedi</string>
+    <string name="google_drive_restore_success">Drive\'dan geri yüklendi</string>
+    <string name="google_drive_restore_failed">Drive\'dan geri yüklenemedi</string>
+    <string name="google_drive_sign_in_failed">Google ile bağlanılamadı</string>
     <string name="backup_saved">Yedek başarıyla kaydedildi</string>
     <string name="backup_save_failed">Yedek kaydedilemedi</string>
     <string name="file_read_failed">Dosya okunamadı</string>
@@ -309,6 +327,14 @@
     <string name="quiet_hours_subtitle">Bu saatler arasındaki hatırlatmalar pencerenin bitişine ertelenir.</string>
     <string name="weekly_digest_setting_title">Haftalık özet</string>
     <string name="weekly_digest_setting_subtitle">Haftada bir, tamamladığın görev sayısını (ya da uzun süredir uğramadıysan bir hatırlatma) bildir.</string>
+
+    <!-- ui/settings/ConfirmationSettingsScreen -->
+    <string name="confirmation_settings_title">Onay Mesajları</string>
+    <string name="confirmation_settings_subtitle">Her onay diyaloğunu kendi başına aç/kapat. Kapalıyken ilgili işlem onay beklemeden anında yapılır.</string>
+    <string name="confirm_task_delete_setting_title">Görev silinirken sor</string>
+    <string name="confirm_task_complete_setting_title">Görev tamamlanırken sor</string>
+    <string name="confirm_subtask_delete_setting_title">Alt görev silinirken sor</string>
+    <string name="confirm_subtask_complete_setting_title">Alt görev tamamlanırken sor</string>
 
     <!-- ui/settings/SettingsScreen: Hakkında bölümü -->
     <string name="about_title">Hakkında</string>

@@ -3,6 +3,7 @@ package com.yusufemre.ivirbyyuinn.ui.task
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yusufemre.ivirbyyuinn.data.Category
+import com.yusufemre.ivirbyyuinn.data.ConfirmationPreferences
 import com.yusufemre.ivirbyyuinn.data.Priority
 import com.yusufemre.ivirbyyuinn.data.Recurrence
 import com.yusufemre.ivirbyyuinn.data.Subtask
@@ -17,6 +18,7 @@ import com.yusufemre.ivirbyyuinn.domain.ArchiveTaskUseCase
 import com.yusufemre.ivirbyyuinn.domain.AutoArchiveCompletedTasksUseCase
 import com.yusufemre.ivirbyyuinn.domain.CancelTaskReminderUseCase
 import com.yusufemre.ivirbyyuinn.domain.DailyCompletionCount
+import com.yusufemre.ivirbyyuinn.domain.GetConfirmationPreferencesUseCase
 import com.yusufemre.ivirbyyuinn.domain.DeleteCategoryUseCase
 import com.yusufemre.ivirbyyuinn.domain.DeleteSubtaskUseCase
 import com.yusufemre.ivirbyyuinn.domain.DeleteTaskListUseCase
@@ -122,6 +124,7 @@ class TaskViewModel(
     private val deleteTaskTemplateUseCase: DeleteTaskTemplateUseCase,
     private val parseNaturalLanguageDateUseCase: ParseNaturalLanguageDateUseCase,
     private val refreshWidgetUseCase: RefreshWidgetUseCase,
+    getConfirmationPreferencesUseCase: GetConfirmationPreferencesUseCase,
 ) : ViewModel() {
 
     val taskLists: StateFlow<List<TaskListEntity>> = getTaskListsUseCase()
@@ -145,6 +148,12 @@ class TaskViewModel(
     val subtasksByTask: StateFlow<Map<Long, List<Subtask>>> = getAllSubtasksUseCase()
         .map { allSubtasks -> allSubtasks.groupBy { it.taskId } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
+    // Ayarlar > Onay Mesajları'ndaki 4 anahtar; TaskListScreen bunu
+    // TaskRow/TaskEditorSheet'e geçirip hangi onay dialoglarının
+    // açılacağını belirliyor.
+    val confirmationPreferences: StateFlow<ConfirmationPreferences> = getConfirmationPreferencesUseCase()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ConfirmationPreferences())
 
     // null demek "henüz hangi listenin gösterileceği belli değil",
     // task_lists tablosu yüklenince aşağıdaki init bloğu ilk listeyi

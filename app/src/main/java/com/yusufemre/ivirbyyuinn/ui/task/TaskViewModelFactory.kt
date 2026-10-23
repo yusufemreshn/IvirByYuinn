@@ -16,6 +16,7 @@ import com.yusufemre.ivirbyyuinn.domain.DeleteTaskTemplateUseCase
 import com.yusufemre.ivirbyyuinn.domain.DeleteTaskUseCase
 import com.yusufemre.ivirbyyuinn.domain.FilterAndSortTasksUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetAllSubtasksUseCase
+import com.yusufemre.ivirbyyuinn.domain.GetConfirmationPreferencesUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetArchivedTaskListsUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetArchivedTasksUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetCategoriesUseCase
@@ -86,6 +87,7 @@ class TaskViewModelFactory(
     private val deleteTaskTemplateUseCase: DeleteTaskTemplateUseCase,
     private val parseNaturalLanguageDateUseCase: ParseNaturalLanguageDateUseCase,
     private val refreshWidgetUseCase: RefreshWidgetUseCase,
+    private val getConfirmationPreferencesUseCase: GetConfirmationPreferencesUseCase,
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
@@ -130,6 +132,7 @@ class TaskViewModelFactory(
             deleteTaskTemplateUseCase = deleteTaskTemplateUseCase,
             parseNaturalLanguageDateUseCase = parseNaturalLanguageDateUseCase,
             refreshWidgetUseCase = refreshWidgetUseCase,
+            getConfirmationPreferencesUseCase = getConfirmationPreferencesUseCase,
         ) as T
     }
 }

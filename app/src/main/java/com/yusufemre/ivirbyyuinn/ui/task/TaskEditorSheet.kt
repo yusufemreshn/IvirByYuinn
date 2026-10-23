@@ -177,6 +177,10 @@ fun TaskEditorSheet(
     // başlığı ÖN DOLDURMAK için, existingTask null İKEN (yeni görev)
     // anlamlı, düzenleme modunda hiç kullanılmıyor.
     initialTitle: String = "",
+    // Ayarlar > Onay Mesajları'ndan kapatılabilen alt görev onayları; false
+    // ise ilgili dialog hiç açılmadan işlem direkt yapılıyor.
+    confirmOnSubtaskDelete: Boolean = true,
+    confirmOnSubtaskComplete: Boolean = true,
 ) {
     val context = LocalContext.current
     // Kullanıcı geri bildirimi: özellikle "Görevi düzenle" ekranında (Alt
@@ -532,6 +536,8 @@ fun TaskEditorSheet(
                     onAddSubtask = onAddSubtask,
                     onToggleSubtaskDone = onToggleSubtaskDone,
                     onDeleteSubtask = onDeleteSubtask,
+                    confirmOnDelete = confirmOnSubtaskDelete,
+                    confirmOnComplete = confirmOnSubtaskComplete,
                 )
             }
 
@@ -738,6 +744,8 @@ private fun SubtaskSection(
     onAddSubtask: (String) -> Unit,
     onToggleSubtaskDone: (Subtask) -> Unit,
     onDeleteSubtask: (Subtask) -> Unit,
+    confirmOnDelete: Boolean = true,
+    confirmOnComplete: Boolean = true,
 ) {
     val subtasks by subtasksFlow.collectAsStateWithLifecycle(initialValue = emptyList())
     var newSubtaskTitle by remember { mutableStateOf("") }
@@ -757,7 +765,9 @@ private fun SubtaskSection(
         ) {
             Checkbox(
                 checked = subtask.isDone,
-                onCheckedChange = { subtaskPendingToggle = subtask },
+                onCheckedChange = {
+                    if (confirmOnComplete) subtaskPendingToggle = subtask else onToggleSubtaskDone(subtask)
+                },
             )
             Text(
                 text = subtask.title,
@@ -765,7 +775,9 @@ private fun SubtaskSection(
                 textDecoration = if (subtask.isDone) TextDecoration.LineThrough else TextDecoration.None,
                 modifier = Modifier.weight(1f),
             )
-            IconButton(onClick = { subtaskPendingDelete = subtask }) {
+            IconButton(onClick = {
+                if (confirmOnDelete) subtaskPendingDelete = subtask else onDeleteSubtask(subtask)
+            }) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete_subtask_cd))
             }
         }

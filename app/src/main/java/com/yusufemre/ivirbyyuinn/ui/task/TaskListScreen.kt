@@ -123,6 +123,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
             deleteTaskTemplateUseCase = application.deleteTaskTemplateUseCase,
             parseNaturalLanguageDateUseCase = application.parseNaturalLanguageDateUseCase,
             refreshWidgetUseCase = application.refreshWidgetUseCase,
+            getConfirmationPreferencesUseCase = application.getConfirmationPreferencesUseCase,
         ),
     )
 
@@ -144,6 +145,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
     val sortOption by viewModel.sortOption.collectAsStateWithLifecycle()
     val selectedTaskIds by viewModel.selectedTaskIds.collectAsStateWithLifecycle()
     val selectionMode = selectedTaskIds.isNotEmpty()
+    val confirmationPreferences by viewModel.confirmationPreferences.collectAsStateWithLifecycle()
 
     // showEditor + taskBeingEdited ikilisi editörün "hangi modda" açık
     // olduğunu anlatıyor: showEditor=false -> kapalı, showEditor=true ve
@@ -205,6 +207,21 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
             )
             if (result == SnackbarResult.ActionPerformed) {
                 viewModel.restoreTask(task)
+            }
+        }
+    }
+
+    // ConfirmDeleteDialog'un onConfirm'i İLE confirmTaskDelete tercihi
+    // kapalıyken doğrudan çağrılan yol AYNI işi yapıyor, tek bir yerde
+    // tanımlı tutuyoruz ki ikisi birbirinden sapmasın.
+    val performBulkDelete = {
+        viewModel.bulkDelete { deletedCount ->
+            if (deletedCount > 0) {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        context.resources.getQuantityString(R.plurals.bulk_deleted_snackbar, deletedCount, deletedCount),
+                    )
+                }
             }
         }
     }
@@ -406,7 +423,9 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                             }) {
                                 Icon(imageVector = Icons.Default.CheckCircle, contentDescription = stringResource(R.string.bulk_complete_cd))
                             }
-                            IconButton(onClick = { showBulkDeleteConfirm = true }) {
+                            IconButton(onClick = {
+                                if (confirmationPreferences.confirmTaskDelete) showBulkDeleteConfirm = true else performBulkDelete()
+                            }) {
                                 Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.bulk_delete_cd))
                             }
                         },
@@ -497,6 +516,9 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                                 onToggleDone = viewModel::toggleDone,
                                 onDelete = onDeleteTask,
                                 onArchive = onArchiveTask,
+                                confirmOnDelete = confirmationPreferences.confirmTaskDelete,
+                                confirmOnComplete = confirmationPreferences.confirmTaskComplete,
+                                confirmOnSubtaskComplete = confirmationPreferences.confirmSubtaskComplete,
                                 modifier = Modifier
                                     .zIndex(if (isDragging) 1f else 0f)
                                     .offset {
@@ -558,6 +580,9 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                                 onToggleDone = viewModel::toggleDone,
                                 onDelete = onDeleteTask,
                                 onArchive = onArchiveTask,
+                                confirmOnDelete = confirmationPreferences.confirmTaskDelete,
+                                confirmOnComplete = confirmationPreferences.confirmTaskComplete,
+                                confirmOnSubtaskComplete = confirmationPreferences.confirmSubtaskComplete,
                                 // Arama/filtre/sıralama değiştikçe satırlar
                                 // yer değiştiriyor ya da listeden çıkıp
                                 // giriyor, animateItem() olmadan bu
@@ -615,6 +640,8 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
             categories = categories,
             subtasksFlow = editingTask?.let { viewModel.getSubtasks(it.id) },
             onDismiss = { showEditor = false },
+            confirmOnSubtaskDelete = confirmationPreferences.confirmSubtaskDelete,
+            confirmOnSubtaskComplete = confirmationPreferences.confirmSubtaskComplete,
             onSave = { title, categoryId, priority, dueAt, note, recurrence ->
                 // Kullanıcı isteği: aynı listede aynı isimde ikinci bir görev
                 // eklenemesin/böyle bir isme değiştirilemesin. Bu durumda
@@ -767,17 +794,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
         ConfirmDeleteDialog(
             title = stringResource(R.string.confirm_bulk_delete_title),
             message = stringResource(R.string.confirm_bulk_delete_message, selectedTaskIds.size),
-            onConfirm = {
-                viewModel.bulkDelete { deletedCount ->
-                    if (deletedCount > 0) {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(
-                                context.resources.getQuantityString(R.plurals.bulk_deleted_snackbar, deletedCount, deletedCount),
-                            )
-                        }
-                    }
-                }
-            },
+            onConfirm = performBulkDelete,
             onDismiss = { showBulkDeleteConfirm = false },
         )
     }

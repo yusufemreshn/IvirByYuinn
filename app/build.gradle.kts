@@ -15,14 +15,14 @@ android {
         applicationId = "com.yusufemre.ivirbyyuinn"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
+        versionCode = 2
         // Ayarlar > Hakkında bölümündeki sürüm numarasının TEK kaynağı
         // burası, PackageManager.getPackageInfo() üzerinden orada
         // otomatik okunuyor (bkz. SettingsScreen.kt AboutSection). Yeni
         // bir derleme alıp "ıvırVX.Y.Z.apk" olarak isimlendirdiğimde, bu
         // satırı "X.Y.Z" ile güncellemem yeterli, başka hiçbir yeri
         // elle değiştirmeme gerek yok.
-        versionName = "1.0.0"
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,6 +53,21 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    // Google Drive istemcisinin (google-api-client-android üzerinden gelen
+    // google-auth-library) birkaç bağımlılığı AYNI META-INF dosya adını
+    // (ör. INDEX.LIST) taşıyor, APK paketleme bu yüzden hangisini
+    // kullanacağını bilemeyip hata veriyordu. Bu dosyalar çalışma zamanında
+    // hiç kullanılmıyor (sadece derleme zamanı meta verisi), güvenle
+    // dışlıyoruz.
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/INDEX.LIST",
+                "META-INF/DEPENDENCIES",
+            )
+        }
     }
 }
 
@@ -106,6 +121,19 @@ dependencies {
     // periyodik işler için (burada tam olarak bu). 2.11'den itibaren
     // CoroutineWorker work-runtime-ktx'te değil, doğrudan bu pakette.
     implementation(libs.androidx.work.runtime)
+
+    // Google Drive yedekleme: hesap girişi (play-services-auth) + Drive v3
+    // REST istemcisi (google-api-client-android, httpclient'sız Android
+    // varyantı; google-api-services-drive, Drive'ın model sınıfları;
+    // google-http-client-gson, JSON (de)serileştirme).
+    implementation(libs.play.services.auth)
+    implementation(libs.google.api.client.android) {
+        exclude(group = "org.apache.httpcomponents")
+    }
+    implementation(libs.google.api.services.drive) {
+        exclude(group = "org.apache.httpcomponents")
+    }
+    implementation(libs.google.http.client.gson)
 
     testImplementation(libs.junit)
 

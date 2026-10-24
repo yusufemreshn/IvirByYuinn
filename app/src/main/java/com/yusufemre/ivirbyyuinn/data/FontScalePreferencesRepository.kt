@@ -32,6 +32,11 @@ class FontScalePreferencesRepository(context: Context) {
         prefs.edit { putString(KEY_FONT_SCALE, preference.name) }
     }
 
+    // LanguagePreferencesRepository.getLanguagePreferenceNow() ile aynı
+    // sebep: MainActivity.attachBaseContext, Compose/ViewModel dünyası
+    // henüz kurulmadan ÖNCE çalışıyor, senkron bir okumaya ihtiyaç var.
+    fun getFontScalePreferenceNow(): FontScalePreference = readCurrentValue()
+
     private fun readCurrentValue(): FontScalePreference {
         val stored = prefs.getString(KEY_FONT_SCALE, null) ?: return FontScalePreference.MEDIUM
         return runCatching { FontScalePreference.valueOf(stored) }.getOrDefault(FontScalePreference.MEDIUM)

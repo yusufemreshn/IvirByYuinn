@@ -54,6 +54,19 @@ import kotlinx.coroutines.delay
 // gibi kendi geri yığınını yöneten bir çözüm gerektiriyor, bu Faz 10c'nin
 // kapsamına daha uygun. Şimdilik geri tuşu MEVCUT (aşağıdaki) animasyonlu
 // dismiss ile çalışıyor, sadece parmakla "önizleme" kısmı yok.
+//
+// 2026-10-24: Yazı Boyutu'nu burada LocalDensity.current okuyup
+// CompositionLocalProvider ile Dialog içine geri vermeyi DENEDİK — işe
+// yaradı ama YENİ bir hata açtı: bu, AnimatedDialog'u HER yazı boyutu
+// değişiminde recompose ettiriyor, ve iç içe açık iki Dialog (ör. Ayarlar
+// açıkken içinde Görünüm de açık) AYNI ANDA recompose olunca Compose'un
+// Dialog altyapısı dıştaki pencerenin içerik View'ını (ve onun remember'
+// larını, ör. SettingsScreen'in showAppearance'ı) sıfırlayıp yeniden
+// kuruyordu — kullanıcı "Ayarlar listesine fırlatılıyorum" olarak
+// gördü. Çözüm artık burada DEĞİL: Yazı Boyutu, MainActivity.
+// attachBaseContext'te Configuration.fontScale üzerinden uygulanıyor, bu
+// sayede HER Window (her Dialog dahil) kendi density'sini native olarak
+// doğru hesaplıyor, burada elle bir şey yapmaya gerek kalmıyor.
 @Composable
 fun AnimatedDialog(
     onDismissRequest: () -> Unit,
@@ -90,7 +103,16 @@ fun AnimatedDialog(
 
     Dialog(
         onDismissRequest = dismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+        // Kullanıcı geri bildirimi: Yazı Boyutu değiştirilince (sadece o
+        // anda, içerik ölçüleri AYNI dokunuşun ortasında değişince) bu
+        // dialog bazen kendiliğinden kapanıyordu. Sebebi: içerik boyutu
+        // tam dokunuş sırasında büyüyüp/küçülünce, Dialog'un varsayılan
+        // "dışına tıklandı" algılayıcısı bunu yanlışlıkla dışarı tıklama
+        // sanıyordu. Bu ekranların hepsi zaten TAM EKRAN (dışarısı diye
+        // bir şey yok, TopAppBar'daki geri okuyla kapatılıyor), o yüzden
+        // dismissOnClickOutside'ı güvenle kapatabiliyoruz; geri tuşu/jesti
+        // (dismissOnBackPress, varsayılan açık) hâlâ çalışmaya devam ediyor.
+        properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnClickOutside = false),
     ) {
         AnimatedVisibility(
             visible = visible,

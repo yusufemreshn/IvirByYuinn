@@ -1,5 +1,6 @@
 package com.yusufemre.ivirbyyuinn.domain
 
+import android.util.Log
 import com.yusufemre.ivirbyyuinn.data.BackupRepository
 import com.yusufemre.ivirbyyuinn.data.GoogleDriveBackupRepository
 
@@ -13,5 +14,5 @@ class RestoreBackupFromDriveUseCase(
         val json = googleDriveBackupRepository.downloadLatestBackup()
             ?: error("Drive'da yedek bulunamadı")
         backupRepository.importFromJson(json)
-    }
+    }.onFailure { Log.e("GoogleDriveBackup", "Restore failed", it) }
 }

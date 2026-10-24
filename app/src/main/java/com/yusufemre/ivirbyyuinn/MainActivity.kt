@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yusufemre.ivirbyyuinn.data.LanguagePreference
 import com.yusufemre.ivirbyyuinn.data.ThemePreference
+import com.yusufemre.ivirbyyuinn.data.scaleFactor
 import com.yusufemre.ivirbyyuinn.ui.home.HomeScreen
 import com.yusufemre.ivirbyyuinn.ui.lock.AppLockScreen
 import com.yusufemre.ivirbyyuinn.ui.lock.AppLockViewModel
@@ -35,8 +37,6 @@ import com.yusufemre.ivirbyyuinn.ui.lock.AppLockViewModelFactory
 import com.yusufemre.ivirbyyuinn.ui.task.TaskListScreen
 import com.yusufemre.ivirbyyuinn.ui.theme.ColorThemeViewModel
 import com.yusufemre.ivirbyyuinn.ui.theme.ColorThemeViewModelFactory
-import com.yusufemre.ivirbyyuinn.ui.theme.FontScaleViewModel
-import com.yusufemre.ivirbyyuinn.ui.theme.FontScaleViewModelFactory
 import com.yusufemre.ivirbyyuinn.ui.theme.IvirTheme
 import com.yusufemre.ivirbyyuinn.ui.theme.ThemeViewModel
 import com.yusufemre.ivirbyyuinn.ui.theme.ThemeViewModelFactory
@@ -66,7 +66,15 @@ class MainActivity : FragmentActivity() {
             LanguagePreference.TURKISH -> newBase.withLocale(Locale.forLanguageTag("tr"))
             LanguagePreference.ENGLISH -> newBase.withLocale(Locale.forLanguageTag("en"))
         }
-        super.attachBaseContext(localizedContext)
+        // Kullanıcı isteği (2026-10-24): Yazı Boyutu TÜM uygulamayı (Ayarlar
+        // dahil) etkilesin. Configuration.fontScale'i burada çarpıyoruz,
+        // çünkü HER Window (her Dialog/AlertDialog dahil, kendi Window'unu
+        // açan her ekran) kendi LocalDensity'sini bu Context'in
+        // Configuration'ından türetiyor — tek bir yerden, native olarak,
+        // elle CompositionLocalProvider'a hiç gerek kalmadan uygulanıyor.
+        val fontScalePreference = application.currentFontScalePreference()
+        val scaledContext = localizedContext.withFontScale(fontScalePreference.scaleFactor())
+        super.attachBaseContext(scaledContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,17 +138,6 @@ class MainActivity : FragmentActivity() {
             )
             val colorTheme by colorThemeViewModel.colorTheme.collectAsStateWithLifecycle()
 
-            // 2026-08-09: Ayarlar > Yazı Boyutu, ThemeViewModel/ColorThemeViewModel
-            // ile aynı desen, MainActivity ve SettingsScreen aynı Activity'yi
-            // paylaştığı için ikisi de AYNI örneği görüyor.
-            val fontScaleViewModel: FontScaleViewModel = viewModel(
-                factory = FontScaleViewModelFactory(
-                    getFontScalePreferenceUseCase = application.getFontScalePreferenceUseCase,
-                    setFontScalePreferenceUseCase = application.setFontScalePreferenceUseCase,
-                ),
-            )
-            val fontScalePreference by fontScaleViewModel.fontScalePreference.collectAsStateWithLifecycle()
-
             // Faz 7a: uygulama kilidi. ThemeViewModel gibi, MainActivity ve
             // TaskListScreen aynı Activity'yi (ViewModelStoreOwner) paylaştığı
             // için burada kurulan AppLockViewModel örneği ihtiyaç duyan her
@@ -176,11 +173,18 @@ class MainActivity : FragmentActivity() {
             // hataydı. Senkron okuma sayesinde değişiklik ancak BİR SONRAKİ
             // soğuk başlangıçta etkili oluyor, tıpkı dil değişikliğinin
             // recreate() istemesi gibi.
-            var showHomeScreen by remember {
+            // rememberSaveable (düz remember DEĞİL): Ayarlar > Görünüm'de
+            // Yazı Boyutu/Dil değişince Activity recreate() oluyor. Bu
+            // state saveable olmazsa recreate sonrası yukarıdaki satır
+            // yeniden çalışıp kullanıcıyı (TaskListScreen'deyken bile)
+            // Giriş Ekranı'na geri fırlatırdı; saveable olunca recreate
+            // ÖNCESİ neredeyse (Giriş Ekranı'nda mı, listede mi) aynen
+            // korunuyor.
+            var showHomeScreen by rememberSaveable {
                 mutableStateOf(!openAddTaskOnLaunch && application.currentShowHomeScreenPreference())
             }
 
-            IvirTheme(darkTheme = darkTheme, colorTheme = colorTheme, fontScale = fontScalePreference) {
+            IvirTheme(darkTheme = darkTheme, colorTheme = colorTheme) {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     // Kullanıcı isteğiyle (2026-08-07) sıra değişti: kilit
                     // AÇIKSA giriş ekranından bile ÖNCE soruluyor: yani
@@ -227,6 +231,17 @@ private fun Context.withLocale(locale: Locale): Context {
     Locale.setDefault(locale)
     val configuration = Configuration(resources.configuration)
     configuration.setLocale(locale)
+    return createConfigurationContext(configuration)
+}
+
+// withLocale ile AYNI desen: telefonun KENDİ erişilebilirlik fontScale'ini
+// (configuration.fontScale, zaten sistemden geliyor) SIFIRLAMIYORUZ, üzerine
+// kendi çarpanımızı çarpıyoruz. createConfigurationContext yeni bir Context
+// döndürdüğü için bu SADECE bizim Activity'mizi (ve ondan türeyen HER
+// Window'u, her Dialog/AlertDialog'u da) etkiliyor.
+private fun Context.withFontScale(scaleFactor: Float): Context {
+    val configuration = Configuration(resources.configuration)
+    configuration.fontScale *= scaleFactor
     return createConfigurationContext(configuration)
 }
 

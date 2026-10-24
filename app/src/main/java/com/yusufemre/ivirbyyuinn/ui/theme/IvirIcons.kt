@@ -35,6 +35,15 @@ object IvirIcons {
     val Mic: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildMicIcon() }
     val Timer: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildTimerIcon() }
     val Archive: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildArchiveIcon() }
+    // Ayarlar menüsünün 6 kategori satırı için, Archive/Today gibi AYNI
+    // "yeni ikon paketi yok, path'leri elle çiz" kararı.
+    val CloudBackup: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildCloudBackupIcon() }
+    val Palette: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildPaletteIcon() }
+    val Toggle: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildToggleIcon() }
+    val Bell: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildBellIcon() }
+    val Shield: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildShieldIcon() }
+    val Info: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildInfoIcon() }
+    val Check: ImageVector by lazy(LazyThreadSafetyMode.NONE) { buildCheckIcon() }
 }
 
 // Bir çemberi, dört adet 90 derecelik yaydan örüyoruz (saat 3 -> 6 -> 9 -> 12
@@ -321,6 +330,175 @@ private fun buildArchiveIcon(): ImageVector =
             // Tepsi: üst ağız çizgisi + yamuk gövde.
             moveTo(4f, 13f); lineTo(20f, 13f)
             moveTo(4f, 13f); lineTo(5f, 19f); lineTo(19f, 19f); lineTo(20f, 13f)
+        }
+    }.build()
+
+private fun buildCloudBackupIcon(): ImageVector =
+    ImageVector.Builder(
+        name = "Ivir.CloudBackup",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 24f,
+        viewportHeight = 24f,
+    ).apply {
+        // Üç üst üste binen daire + düz bir taban: klasik bulut silüeti,
+        // nonzero dolgu kuralıyla tek bir parça olarak birleşiyor.
+        path(fill = SolidColor(Color.Black)) {
+            circle(9.5f, 12f, 3.6f)
+            circle(14f, 11f, 4.2f)
+            moveTo(6.5f, 12.5f); lineTo(17.5f, 12.5f); lineTo(17.5f, 16.5f); lineTo(6.5f, 16.5f); close()
+        }
+        // Buluta inen küçük bir ok: "yedekleniyor/iniyor" hissi.
+        path(
+            stroke = SolidColor(Color.Black),
+            strokeLineWidth = 1.6f,
+            strokeLineCap = StrokeCap.Round,
+            strokeLineJoin = StrokeJoin.Round,
+        ) {
+            moveTo(12f, 6f); lineTo(12f, 13.5f)
+            moveTo(9.5f, 11f); lineTo(12f, 13.5f); lineTo(14.5f, 11f)
+        }
+    }.build()
+
+private fun buildPaletteIcon(): ImageVector =
+    ImageVector.Builder(
+        name = "Ivir.Palette",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 24f,
+        viewportHeight = 24f,
+    ).apply {
+        // Ressam paleti: dış anahat + içinde üç küçük dolu "boya" noktası,
+        // Renk Teması bölümünün (23 renkli daire ızgarası) özetini taşıyor.
+        path(stroke = SolidColor(Color.Black), strokeLineWidth = 1.7f) {
+            circle(12f, 12.5f, 8f)
+        }
+        path(fill = SolidColor(Color.Black)) {
+            circle(9f, 10f, 1.6f)
+            circle(14.5f, 9.5f, 1.6f)
+            circle(15.5f, 14.5f, 1.6f)
+        }
+    }.build()
+
+private fun buildToggleIcon(): ImageVector =
+    ImageVector.Builder(
+        name = "Ivir.Toggle",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 24f,
+        viewportHeight = 24f,
+    ).apply {
+        // Yatay bir "stadyum" anahat (iki yarım daire + iki düz kenar) +
+        // sağ tarafta dolu bir daire: bir switch'in "açık" haliyle AYNI
+        // motif, Ayarlar'daki onay/switch davranışlarını temsil ediyor.
+        path(stroke = SolidColor(Color.Black), strokeLineWidth = 1.7f) {
+            moveTo(8f, 7f)
+            arcTo(5f, 5f, 0f, isMoreThanHalf = true, isPositiveArc = false, x1 = 8f, y1 = 17f)
+            lineTo(16f, 17f)
+            arcTo(5f, 5f, 0f, isMoreThanHalf = true, isPositiveArc = false, x1 = 16f, y1 = 7f)
+            close()
+        }
+        path(fill = SolidColor(Color.Black)) {
+            circle(16f, 12f, 3.2f)
+        }
+    }.build()
+
+private fun buildBellIcon(): ImageVector =
+    ImageVector.Builder(
+        name = "Ivir.Bell",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 24f,
+        viewportHeight = 24f,
+    ).apply {
+        // Klasik zil: kubbe + iki yan kenar + taban çizgisi, altında küçük
+        // bir tokmak (dolu daire).
+        path(
+            stroke = SolidColor(Color.Black),
+            strokeLineWidth = 1.7f,
+            strokeLineCap = StrokeCap.Round,
+            strokeLineJoin = StrokeJoin.Round,
+        ) {
+            moveTo(7f, 15f)
+            lineTo(7f, 11f)
+            curveTo(7f, 7.7f, 9.2f, 5.5f, 12f, 5.5f)
+            curveTo(14.8f, 5.5f, 17f, 7.7f, 17f, 11f)
+            lineTo(17f, 15f)
+            moveTo(6f, 15f); lineTo(18f, 15f)
+        }
+        path(fill = SolidColor(Color.Black)) {
+            circle(12f, 18f, 1.6f)
+        }
+    }.build()
+
+private fun buildShieldIcon(): ImageVector =
+    ImageVector.Builder(
+        name = "Ivir.Shield",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 24f,
+        viewportHeight = 24f,
+    ).apply {
+        // Üstten düz, alta doğru sivrilen klasik kalkan anahatı: Uygulama
+        // Kilidi'nin (Güvenlik) özetini taşıyor.
+        path(
+            stroke = SolidColor(Color.Black),
+            strokeLineWidth = 1.7f,
+            strokeLineCap = StrokeCap.Round,
+            strokeLineJoin = StrokeJoin.Round,
+        ) {
+            moveTo(12f, 3f)
+            lineTo(18.5f, 5.5f)
+            lineTo(18.5f, 11f)
+            curveTo(18.5f, 15.5f, 15.6f, 18.7f, 12f, 20f)
+            curveTo(8.4f, 18.7f, 5.5f, 15.5f, 5.5f, 11f)
+            lineTo(5.5f, 5.5f)
+            close()
+        }
+    }.build()
+
+private fun buildInfoIcon(): ImageVector =
+    ImageVector.Builder(
+        name = "Ivir.Info",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 24f,
+        viewportHeight = 24f,
+    ).apply {
+        // Today ikonuyla (dış halka) AYNI temel, ama ortadaki tek nokta
+        // yerine küçük bir "i" harfi: nokta + altında dikey çizgi.
+        path(stroke = SolidColor(Color.Black), strokeLineWidth = 1.7f) {
+            circle(12f, 12f, 8.5f)
+        }
+        path(fill = SolidColor(Color.Black)) {
+            circle(12f, 8.7f, 1.3f)
+        }
+        path(
+            stroke = SolidColor(Color.Black),
+            strokeLineWidth = 1.8f,
+            strokeLineCap = StrokeCap.Round,
+        ) {
+            moveTo(12f, 11.7f); lineTo(12f, 16f)
+        }
+    }.build()
+
+private fun buildCheckIcon(): ImageVector =
+    ImageVector.Builder(
+        name = "Ivir.Check",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 24f,
+        viewportHeight = 24f,
+    ).apply {
+        // Ayar değişikliği teyit snackbar'ı için: tek bir kırık çizgi,
+        // diğer ikonlardaki yuvarlak uçlu/köşeli çizgi diliyle aynı.
+        path(
+            stroke = SolidColor(Color.Black),
+            strokeLineWidth = 2.2f,
+            strokeLineCap = StrokeCap.Round,
+            strokeLineJoin = StrokeJoin.Round,
+        ) {
+            moveTo(5f, 12.5f); lineTo(9.5f, 17f); lineTo(19f, 7f)
         }
     }.build()
 

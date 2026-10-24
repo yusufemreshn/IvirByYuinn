@@ -45,6 +45,8 @@ fun ConfirmationSettingsScreen(onClose: () -> Unit) {
     )
     val preferences by viewModel.confirmationPreferences.collectAsStateWithLifecycle()
 
+    val (snackbarHostState, notifySettingChanged) = rememberSettingChangedSnackbar()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -59,12 +61,13 @@ fun ConfirmationSettingsScreen(onClose: () -> Unit) {
                 },
             )
         },
+        snackbarHost = { SettingSnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 96.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(
@@ -76,22 +79,34 @@ fun ConfirmationSettingsScreen(onClose: () -> Unit) {
             ConfirmationToggleRow(
                 title = stringResource(R.string.confirm_task_delete_setting_title),
                 checked = preferences.confirmTaskDelete,
-                onCheckedChange = { viewModel.setConfirmationPreferences(preferences.copy(confirmTaskDelete = it)) },
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmTaskDelete = it))
+                    notifySettingChanged()
+                },
             )
             ConfirmationToggleRow(
                 title = stringResource(R.string.confirm_task_complete_setting_title),
                 checked = preferences.confirmTaskComplete,
-                onCheckedChange = { viewModel.setConfirmationPreferences(preferences.copy(confirmTaskComplete = it)) },
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmTaskComplete = it))
+                    notifySettingChanged()
+                },
             )
             ConfirmationToggleRow(
                 title = stringResource(R.string.confirm_subtask_delete_setting_title),
                 checked = preferences.confirmSubtaskDelete,
-                onCheckedChange = { viewModel.setConfirmationPreferences(preferences.copy(confirmSubtaskDelete = it)) },
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmSubtaskDelete = it))
+                    notifySettingChanged()
+                },
             )
             ConfirmationToggleRow(
                 title = stringResource(R.string.confirm_subtask_complete_setting_title),
                 checked = preferences.confirmSubtaskComplete,
-                onCheckedChange = { viewModel.setConfirmationPreferences(preferences.copy(confirmSubtaskComplete = it)) },
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmSubtaskComplete = it))
+                    notifySettingChanged()
+                },
             )
         }
     }

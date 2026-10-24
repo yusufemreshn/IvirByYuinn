@@ -14,6 +14,7 @@ import com.yusufemre.ivirbyyuinn.data.GoogleDrivePreferencesRepository
 import com.yusufemre.ivirbyyuinn.data.LanguagePreferencesRepository
 import com.yusufemre.ivirbyyuinn.data.QuietHoursPreferencesRepository
 import com.yusufemre.ivirbyyuinn.data.ShowHomeScreenPreferencesRepository
+import com.yusufemre.ivirbyyuinn.data.SnoozeDurationPreferencesRepository
 import com.yusufemre.ivirbyyuinn.data.SubtaskRepository
 import com.yusufemre.ivirbyyuinn.data.TaskCompletionRepository
 import com.yusufemre.ivirbyyuinn.data.TaskListRepository
@@ -53,6 +54,7 @@ import com.yusufemre.ivirbyyuinn.domain.GetGoogleDriveSignInIntentUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetLanguagePreferenceUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetQuietHoursUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetShowHomeScreenPreferenceUseCase
+import com.yusufemre.ivirbyyuinn.domain.GetSnoozeDurationUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetSmartViewTasksUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetSubtasksUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetTaskByIdUseCase
@@ -86,6 +88,7 @@ import com.yusufemre.ivirbyyuinn.domain.SetGoogleDriveAutoBackupEnabledUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetLanguagePreferenceUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetQuietHoursUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetShowHomeScreenPreferenceUseCase
+import com.yusufemre.ivirbyyuinn.domain.SetSnoozeDurationUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetTaskListArchivedUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetThemePreferenceUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetWeeklyDigestOptInUseCase
@@ -162,6 +165,7 @@ class IvirApplication : Application() {
     private val autoArchiveScheduler by lazy { AutoArchiveScheduler(this) }
     private val focusSessionPreferencesRepository by lazy { FocusSessionPreferencesRepository(this) }
     private val confirmationPreferencesRepository by lazy { ConfirmationPreferencesRepository(this) }
+    private val snoozeDurationPreferencesRepository by lazy { SnoozeDurationPreferencesRepository(this) }
     private val googleDriveBackupRepository by lazy { GoogleDriveBackupRepository(this) }
     private val googleDrivePreferencesRepository by lazy { GoogleDrivePreferencesRepository(this) }
     private val googleDriveBackupScheduler by lazy { GoogleDriveBackupScheduler(this) }
@@ -219,6 +223,9 @@ class IvirApplication : Application() {
 
     val getQuietHoursUseCase by lazy { GetQuietHoursUseCase(quietHoursPreferencesRepository) }
     val setQuietHoursUseCase by lazy { SetQuietHoursUseCase(quietHoursPreferencesRepository) }
+
+    val getSnoozeDurationUseCase by lazy { GetSnoozeDurationUseCase(snoozeDurationPreferencesRepository) }
+    val setSnoozeDurationUseCase by lazy { SetSnoozeDurationUseCase(snoozeDurationPreferencesRepository) }
 
     val getConfirmationPreferencesUseCase by lazy { GetConfirmationPreferencesUseCase(confirmationPreferencesRepository) }
     val setConfirmationPreferencesUseCase by lazy { SetConfirmationPreferencesUseCase(confirmationPreferencesRepository) }
@@ -296,4 +303,13 @@ class IvirApplication : Application() {
     // tek seferlik, composition başına verilen bir karar, bkz.
     // ShowHomeScreenPreferencesRepository.getShowHomeScreenPreferenceNow.
     fun currentShowHomeScreenPreference() = showHomeScreenPreferencesRepository.getShowHomeScreenPreferenceNow()
+
+    // Aynı gerekçe: Yazı Boyutu artık Configuration.fontScale üzerinden
+    // (attachBaseContext) uygulanıyor, bu da Activity oluşmadan ÖNCE
+    // senkron bir okuma gerektiriyor, bkz. oradaki yorum.
+    fun currentFontScalePreference() = fontScalePreferencesRepository.getFontScalePreferenceNow()
+
+    // TaskReminderActionReceiver bir BroadcastReceiver, Flow toplamak için
+    // uygun bir yaşam döngüsü yok, bu yüzden AYNI gerekçeyle senkron okuma.
+    fun currentSnoozeMinutes() = snoozeDurationPreferencesRepository.getSnoozeMinutesNow()
 }

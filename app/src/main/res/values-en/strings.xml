@@ -30,13 +30,79 @@
     </plurals>
 
     <!-- ui/home/HomeScreen -->
-    <string name="home_tagline">Keep your tasks in order</string>
+    <string name="home_tagline">Open the list to see everything, or check your settings first.</string>
+    <string name="home_headline_empty">Nothing waiting for you today.</string>
     <string name="home_enter_app">Enter App</string>
     <string name="home_exit">Exit</string>
     <plurals name="home_active_tasks_summary">
         <item quantity="one">%d task is waiting for you</item>
         <item quantity="other">%d tasks are waiting for you</item>
     </plurals>
+    <string-array name="home_quotes">
+        <item>Starting is half of finishing.</item>
+        <item>A small step beats no step at all.</item>
+        <item>Count what got done, not what was perfect.</item>
+        <item>A little work today is a lighter load tomorrow.</item>
+        <item>Order is a calm you earn over time.</item>
+        <item>You don\'t have to finish, just begin.</item>
+        <item>Even the longest list starts with one line.</item>
+        <item>Putting it off just lends today\'s work to tomorrow.</item>
+        <item>A little, often, beats a lot, rarely.</item>
+        <item>Finishing is less scary than starting felt.</item>
+        <item>Write the clutter down, your mind will thank you.</item>
+        <item>What you do today is what tomorrow doesn\'t have to.</item>
+        <item>Focus is choosing not to do everything at once.</item>
+        <item>Peace with the list matters more than finishing it.</item>
+        <item>Small tasks are the foundation of big ones.</item>
+        <item>What\'s unfinished today can finish tomorrow.</item>
+        <item>Discipline is what carries on after motivation fades.</item>
+        <item>Every finished task counts as a small win.</item>
+        <item>Move without rushing, but don\'t stop.</item>
+        <item>The easiest way through a task is to start it.</item>
+        <item>Finishing today\'s work lightens tomorrow.</item>
+        <item>It\'s not about doing more, it\'s about doing the right thing.</item>
+        <item>Small habits carry big changes.</item>
+        <item>Planning is the cheapest way to calm chaos.</item>
+        <item>Finishing is easier than starting felt.</item>
+        <item>Time passes either way; the work stays, so do it.</item>
+        <item>Slow progress still beats no progress.</item>
+        <item>Whatever you do today is less waiting for tomorrow.</item>
+        <item>A tidy list beats a cluttered mind.</item>
+        <item>Every finished task makes the next one easier.</item>
+        <item>Progress matters more than perfection.</item>
+        <item>Do one small thing today, wake up lighter tomorrow.</item>
+        <item>The best time is the time you already have.</item>
+        <item>Putting something off makes it twice as heavy.</item>
+        <item>A calm mind runs through an ordered list.</item>
+        <item>What gets done matters more than what gets planned.</item>
+        <item>Three tasks done today beat ten planned for later.</item>
+        <item>Small steps still cover long distances.</item>
+        <item>Done comes before perfect.</item>
+        <item>A finished task is the best excuse to rest.</item>
+        <item>The first half hour of the day shapes the rest of it.</item>
+        <item>A little, consistently, beats a lot, erratically.</item>
+        <item>The list can be long; the first line is what matters.</item>
+        <item>What you finish today won\'t be waiting tomorrow.</item>
+        <item>Don\'t wait to feel ready before starting.</item>
+        <item>A little order brings a lot of calm.</item>
+        <item>Doing is less tiring than thinking about doing.</item>
+        <item>Every finished task makes the next one less daunting.</item>
+        <item>The hard part is starting; the rest follows on its own.</item>
+        <item>Today\'s plan is tomorrow\'s ease.</item>
+        <item>Take one step, the direction gets clearer with time.</item>
+        <item>The best list is the one you actually follow.</item>
+        <item>It\'s finished tasks, not piled-up ones, that carry you.</item>
+        <item>A little progress beats no progress.</item>
+        <item>What\'s done today won\'t be chased tomorrow.</item>
+        <item>Being consistent lasts longer than being perfect.</item>
+        <item>Finishing a task lightens the mind a little too.</item>
+        <item>Move in the right direction, even slowly.</item>
+        <item>Today\'s step is one more than yesterday\'s.</item>
+        <item>Small tasks aren\'t ignored, just postponed.</item>
+        <item>Finishing is easy, as long as you start.</item>
+        <item>Don\'t let today\'s list spill into tomorrow\'s load.</item>
+        <item>A calm day comes from a planned one.</item>
+    </string-array>
 
     <!-- ui/task/AppDrawerContent: Faz 12a smart lists -->
     <string name="smart_view_today">Today</string>
@@ -236,9 +302,14 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
 
+    <!-- ui/settings/AppearanceSettingsScreen > Light/Dark Mode -->
+    <string name="theme_mode_title">Light/Dark Mode</string>
+    <string name="theme_mode_subtitle">Choose whether the app looks light or dark. Works independently of the color theme.</string>
+
     <!-- ui/theme/AppColorTheme options (Settings > Color Theme) -->
     <string name="color_theme_title">Color Theme</string>
     <string name="color_theme_subtitle">Pick the app\'s main color. Works independently of Light/Dark mode.</string>
+    <string name="color_theme_selected_format">Selected: %1$s</string>
     <string name="color_theme_dynamic">My Wallpaper</string>
     <string name="color_theme_teal">Teal (Classic)</string>
     <string name="color_theme_ocean">Ocean</string>
@@ -265,6 +336,18 @@
 
     <!-- ui/settings/SettingsScreen -->
     <string name="settings_title">Settings</string>
+    <string name="settings_category_data_title">Data &amp; Backup</string>
+    <string name="settings_category_data_subtitle">Export, Google Drive, restore</string>
+    <string name="settings_category_appearance_title">Appearance</string>
+    <string name="settings_category_appearance_subtitle">Language, font size, mode, color theme</string>
+    <string name="settings_category_behavior_title">Behavior</string>
+    <string name="settings_category_behavior_subtitle">Confirmation messages, home screen</string>
+    <string name="settings_category_notifications_subtitle">Quiet hours, weekly digest</string>
+    <string name="settings_category_security_subtitle">App lock</string>
+    <string name="settings_category_about_subtitle">Version, developer</string>
+    <string name="settings_value_connected">Connected</string>
+    <string name="settings_value_on">On</string>
+    <string name="settings_value_off">Off</string>
     <string name="data_management_title">Data Management</string>
     <string name="data_management_subtitle">Save all your lists, tasks, and stats history to a single file, and restore from it later if you want.</string>
     <string name="export_backup">Export Backup</string>
@@ -291,6 +374,7 @@
     <string name="google_drive_restore_failed">Couldn\'t restore from Drive</string>
     <string name="google_drive_sign_in_failed">Couldn\'t connect with Google</string>
     <string name="backup_saved">Backup saved successfully</string>
+    <string name="setting_updated_snackbar">Setting changed successfully</string>
     <string name="backup_save_failed">Backup couldn\'t be saved</string>
     <string name="file_read_failed">Couldn\'t read the file</string>
     <string name="backup_restored">Backup restored</string>
@@ -353,6 +437,13 @@
     <string name="reminder_notification_title">Reminder</string>
     <string name="reminder_action_snooze">Snooze</string>
     <string name="reminder_action_complete">Complete</string>
+    <string name="snooze_confirmation_title">Snoozed</string>
+    <string name="snooze_confirmation_text">"%1$s" snoozed for %2$d minutes</string>
+    <string name="complete_confirmation_title">Completed</string>
+    <string name="complete_confirmation_text">"%1$s" completed successfully</string>
+    <string name="settings_snooze_duration_title">Snooze duration</string>
+    <string name="settings_snooze_duration_subtitle">How many minutes should the "Snooze" button on a reminder push the task back?</string>
+    <string name="snooze_minutes_format">%d min</string>
     <string name="weekly_digest_channel_name">Weekly digest</string>
     <string name="weekly_digest_channel_description">Weekly completed-task summary and re-engagement notification</string>
     <string name="weekly_digest_title">Weekly digest</string>

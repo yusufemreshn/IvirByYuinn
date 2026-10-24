@@ -1,5 +1,6 @@
 package com.yusufemre.ivirbyyuinn.domain
 
+import android.util.Log
 import com.yusufemre.ivirbyyuinn.data.BackupRepository
 import com.yusufemre.ivirbyyuinn.data.GoogleDriveBackupRepository
 import com.yusufemre.ivirbyyuinn.data.GoogleDrivePreferencesRepository
@@ -17,5 +18,5 @@ class UploadBackupToDriveUseCase(
         val json = backupRepository.exportToJson()
         googleDriveBackupRepository.uploadBackup(json)
         googleDrivePreferencesRepository.setLastBackupAtMillis(System.currentTimeMillis())
-    }
+    }.onFailure { Log.e("GoogleDriveBackup", "Upload failed", it) }
 }

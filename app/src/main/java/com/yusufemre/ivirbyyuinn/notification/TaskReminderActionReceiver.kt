@@ -1,10 +1,15 @@
 package com.yusufemre.ivirbyyuinn.notification
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.yusufemre.ivirbyyuinn.IvirApplication
+import com.yusufemre.ivirbyyuinn.R
 import com.yusufemre.ivirbyyuinn.domain.TaskSaveOutcome
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,13 +35,16 @@ class TaskReminderActionReceiver : BroadcastReceiver() {
                 val task = application.getTaskByIdUseCase(taskId) ?: return@launch
                 when (action) {
                     ACTION_SNOOZE -> {
-                        // "1 saat sonra tekrar düşüneceğim": dueAt'in
-                        // KENDİSİNİ 1 saat ileri alıyoruz (ayrı bir
+                        // Kullanıcı isteğiyle artık sabit 1 saat değil,
+                        // Ayarlar > Bildirimler'de seçilen süre (varsayılan
+                        // yine 60 dakika, eski davranışla AYNI): dueAt'in
+                        // KENDİSİNİ o kadar ileri alıyoruz (ayrı bir
                         // "hatırlatma zamanı" alanı açmak bu aşamada
                         // gereksiz karmaşıklık olurdu), sonra
                         // TaskViewModel.rescheduleReminder'la AYNI iki
                         // adımla alarmı yeniden kuruyoruz.
-                        val newDueAt = System.currentTimeMillis() + SNOOZE_DURATION_MILLIS
+                        val snoozeMinutes = application.currentSnoozeMinutes()
+                        val newDueAt = System.currentTimeMillis() + snoozeMinutes * 60_000L
                         val outcome = application.updateTaskUseCase(task.copy(dueAt = newDueAt))
                         // Burada sadece dueAt değişiyor, başlık aynı kalıyor,
                         // BlankTitle/DuplicateTitle pratikte hiç
@@ -49,6 +57,21 @@ class TaskReminderActionReceiver : BroadcastReceiver() {
                             val updatedTask = outcome.task
                             application.cancelTaskReminderUseCase(updatedTask.id)
                             application.scheduleTaskReminderUseCase(updatedTask)
+                            // Kullanıcı isteği: bildirimdeki Ertele'ye
+                            // basınca, telefonun altında (ayrı bir toast/
+                            // bildirim olarak) "kaç dakika ertelendi"
+                            // teyidi görünsün, orijinal hatırlatma
+                            // bildirimi sessizce kapanıp gitmesin.
+                            showConfirmation(
+                                context = context,
+                                notificationId = taskId.toInt() + CONFIRMATION_ID_OFFSET,
+                                title = context.getString(R.string.snooze_confirmation_title),
+                                text = context.getString(
+                                    R.string.snooze_confirmation_text,
+                                    task.title,
+                                    snoozeMinutes,
+                                ),
+                            )
                         }
                     }
                     ACTION_COMPLETE -> {
@@ -63,6 +86,12 @@ class TaskReminderActionReceiver : BroadcastReceiver() {
                         // GELECEĞE ilerletiyor, o durumda burası yeni
                         // tarih için hatırlatmayı gerçekten kuruyor.
                         application.scheduleTaskReminderUseCase(updatedTask)
+                        showConfirmation(
+                            context = context,
+                            notificationId = taskId.toInt() + CONFIRMATION_ID_OFFSET,
+                            title = context.getString(R.string.complete_confirmation_title),
+                            text = context.getString(R.string.complete_confirmation_text, task.title),
+                        )
                     }
                 }
                 NotificationManagerCompat.from(context).cancel(taskId.toInt())
@@ -72,10 +101,33 @@ class TaskReminderActionReceiver : BroadcastReceiver() {
         }
     }
 
+    // TaskReminderReceiver'daki izin kontrolüyle AYNI: Android 13+'ta
+    // POST_NOTIFICATIONS yoksa notify() SecurityException fırlatır.
+    private fun showConfirmation(context: Context, notificationId: Int, title: String, text: String) {
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS,
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!hasPermission) return
+
+        val notification = NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .build()
+        NotificationManagerCompat.from(context).notify(notificationId, notification)
+    }
+
     companion object {
         const val EXTRA_TASK_ID = "extra_task_id"
         const val ACTION_SNOOZE = "com.yusufemre.ivirbyyuinn.action.SNOOZE_TASK"
         const val ACTION_COMPLETE = "com.yusufemre.ivirbyyuinn.action.COMPLETE_TASK"
-        private const val SNOOZE_DURATION_MILLIS = 60 * 60 * 1000L
+        // Orijinal hatırlatma bildirimi taskId.toInt() kimliğini kullanıyor;
+        // teyit bildirimi AYNI id'yi kullanırsa onu (henüz cancel
+        // çağrılmadan önce) üzerine yazabilirdi, o yüzden ayrı bir kimlik
+        // alanına kaydırıyoruz.
+        private const val CONFIRMATION_ID_OFFSET = 1_000_000
     }
 }

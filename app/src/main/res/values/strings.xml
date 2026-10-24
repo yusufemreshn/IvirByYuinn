@@ -30,7 +30,10 @@
     </plurals>
 
     <!-- ui/home/HomeScreen -->
-    <string name="home_tagline">Görevlerini düzenli tut</string>
+    <!-- Yeniden tasarım: artık başlığın ALTINDAKİ destek satırı, başlığın
+         kendisi değil (başlık artık bekleyen görev sayısı). -->
+    <string name="home_tagline">Hepsini tek tek görmek için listeye gir, ya da önce ayarlarına göz at.</string>
+    <string name="home_headline_empty">Bugün için bekleyen görevin yok.</string>
     <string name="home_enter_app">Uygulamaya Gir</string>
     <string name="home_exit">Çıkış</string>
     <!-- Türkçe'de sayıdan sonraki isim çekim almadığı için "one"/"other" aynı metin -->
@@ -38,6 +41,74 @@
         <item quantity="one">%d görev seni bekliyor</item>
         <item quantity="other">%d görev seni bekliyor</item>
     </plurals>
+    <!-- Başlangıç ekranının ortasında rastgele gösterilen kısa sözler;
+         her soğuk açılışta havuzdan biri seçiliyor (bkz. HomeScreen.kt).
+         Abartılı/"cringe" olmayan, sakin bir ton hedeflendi. -->
+    <string-array name="home_quotes">
+        <item>Başlamak, bitirmenin yarısıdır.</item>
+        <item>Küçük bir adım, hiç adım atmamaktan iyidir.</item>
+        <item>Mükemmel olanı değil, yapılanı say.</item>
+        <item>Bugün yapılan küçük bir iş, yarının yüküdür.</item>
+        <item>Düzen, zamanla kazanılan bir sakinliktir.</item>
+        <item>Bitirmek zorunda değilsin, sadece başlamak yeter.</item>
+        <item>En uzun liste bile tek satırla başlar.</item>
+        <item>Erteleme, bugünün işini yarına borç yazmaktır.</item>
+        <item>Az ve düzenli, çok ve dağınıktan iyidir.</item>
+        <item>Bir işi bitirmek, ona başlamaktan daha az korkutucudur.</item>
+        <item>Zihnindeki kalabalığı kağıda dök, rahatlar.</item>
+        <item>Bugün attığın adım, yarının sana kazandırdığıdır.</item>
+        <item>Odaklanmak, aynı anda her şeyi yapmamayı seçmektir.</item>
+        <item>Listeyi bitirmek değil, listeyle barışık olmak önemli.</item>
+        <item>Küçük işler, büyük işlerin temelini oluşturur.</item>
+        <item>Bugün yarım kalan, yarın tamamlanabilir.</item>
+        <item>Disiplin, motivasyon bittiğinde devam edendir.</item>
+        <item>Her tamamlanan görev, küçük bir zafer sayılır.</item>
+        <item>Acele etmeden, ama durmadan ilerle.</item>
+        <item>Bir şeyi yapmanın en kolay yolu, ona başlamaktır.</item>
+        <item>Bugünün işini bugün bitirmek, yarını hafifletir.</item>
+        <item>Çok şey yapmak değil, doğru şeyi yapmak önemli.</item>
+        <item>Küçük alışkanlıklar, büyük değişiklikleri taşır.</item>
+        <item>Planlamak, kaosu sakinleştirmenin en ucuz yoludur.</item>
+        <item>Bir işi bitirmek, ona başlamaktan daha kolaydır.</item>
+        <item>Zaman geçer, iş kalır; önce işi bitir.</item>
+        <item>Yavaş ilerlemek, hiç ilerlememekten iyidir.</item>
+        <item>Bugün ne kadar azını yaptıysan, yarına o kadar az kalır.</item>
+        <item>Düzenli bir liste, dağınık bir zihinden iyidir.</item>
+        <item>Bitirilen her görev, bir sonrakini kolaylaştırır.</item>
+        <item>İlerlemek, mükemmel olmaktan daha değerlidir.</item>
+        <item>Bugün küçük bir şey yap, yarın daha hafif uyan.</item>
+        <item>En iyi zaman, elindeki zamandır.</item>
+        <item>Bir işi ertelemek, onu iki kat ağırlaştırır.</item>
+        <item>Sakin bir zihin, düzenli bir listeden geçer.</item>
+        <item>Yapılan iş, planlanan işten daha değerlidir.</item>
+        <item>Bugünün üç işi, yarının on işinden iyidir.</item>
+        <item>Küçük adımlar, büyük mesafeleri kat eder.</item>
+        <item>Bir şeyi bitirmek, onu mükemmel yapmaktan önce gelir.</item>
+        <item>Tamamlanmış bir görev, en iyi dinlenme sebebidir.</item>
+        <item>Günün ilk yarım saati, günün geri kalanını belirler.</item>
+        <item>Az ama istikrarlı, çok ama düzensizden iyidir.</item>
+        <item>Liste uzun olabilir, önemli olan ilk satırdır.</item>
+        <item>Bugün bitirdiğin iş, yarın seni bekleyen değildir.</item>
+        <item>Bir işe başlamak için hazır hissetmeyi bekleme.</item>
+        <item>Küçük düzen, büyük huzur getirir.</item>
+        <item>Yapmak, düşünmekten daha az yorucudur.</item>
+        <item>Her bitirilen iş, bir sonraki için cesaret verir.</item>
+        <item>Zor olan, başlamaktır; devamı kendiliğinden gelir.</item>
+        <item>Bugünün planı, yarının rahatlığıdır.</item>
+        <item>Bir adım at, yön zamanla netleşir.</item>
+        <item>En iyi liste, takip edilebilen listedir.</item>
+        <item>Biriken işler değil, bitirilen işler seni taşır.</item>
+        <item>Küçük bir ilerleme, hiç ilerlememekten iyidir.</item>
+        <item>Bugün yapılan, yarın aranmayan iştir.</item>
+        <item>Düzenli olmak, mükemmel olmaktan daha sürdürülebilir.</item>
+        <item>Bir işi bitirmek, zihni de bir nebze hafifletir.</item>
+        <item>Yavaş da olsa, doğru yönde ilerle.</item>
+        <item>Bugün attığın adım, dünkünden bir fazla.</item>
+        <item>Küçük işler ihmal edilmez, sadece ertelenir.</item>
+        <item>Bitirmek, başlamaktan daha kolaydır, yeter ki başla.</item>
+        <item>Bugünün listesi, yarının yüküne karışmasın.</item>
+        <item>Sakin bir gün, planlı bir günden geçer.</item>
+    </string-array>
 
     <!-- ui/task/AppDrawerContent: Faz 12a akıllı listeler -->
     <string name="smart_view_today">Bugün</string>
@@ -239,9 +310,14 @@
     <string name="theme_light">Açık</string>
     <string name="theme_dark">Koyu</string>
 
+    <!-- ui/settings/AppearanceSettingsScreen > Açık/Koyu Mod -->
+    <string name="theme_mode_title">Açık/Koyu Mod</string>
+    <string name="theme_mode_subtitle">Uygulamanın açık mı koyu mu görüneceğini seç. Renk Temasından bağımsız çalışır.</string>
+
     <!-- ui/theme/AppColorTheme seçenekleri (Ayarlar > Renk Teması) -->
     <string name="color_theme_title">Renk Teması</string>
     <string name="color_theme_subtitle">Uygulamanın ana rengini seç. Açık/Koyu modundan bağımsız çalışır.</string>
+    <string name="color_theme_selected_format">Seçili: %1$s</string>
     <string name="color_theme_dynamic">Duvar Kağıdım</string>
     <string name="color_theme_teal">Teal (Klasik)</string>
     <string name="color_theme_ocean">Okyanus</string>
@@ -268,6 +344,18 @@
 
     <!-- ui/settings/SettingsScreen -->
     <string name="settings_title">Ayarlar</string>
+    <string name="settings_category_data_title">Veri &amp; Yedekleme</string>
+    <string name="settings_category_data_subtitle">Dışa aktar, Google Drive, geri yükle</string>
+    <string name="settings_category_appearance_title">Görünüm</string>
+    <string name="settings_category_appearance_subtitle">Dil, yazı boyutu, mod, renk teması</string>
+    <string name="settings_category_behavior_title">Davranış</string>
+    <string name="settings_category_behavior_subtitle">Onay mesajları, giriş ekranı</string>
+    <string name="settings_category_notifications_subtitle">Sessiz saatler, haftalık özet</string>
+    <string name="settings_category_security_subtitle">Uygulama kilidi</string>
+    <string name="settings_category_about_subtitle">Sürüm, geliştirici</string>
+    <string name="settings_value_connected">Bağlı</string>
+    <string name="settings_value_on">Açık</string>
+    <string name="settings_value_off">Kapalı</string>
     <string name="data_management_title">Veri Yönetimi</string>
     <string name="data_management_subtitle">Tüm listelerini, görevlerini ve istatistik geçmişini tek bir dosyaya kaydet, istersen sonra aynı dosyadan geri yükle.</string>
     <string name="export_backup">Yedeği Dışa Aktar</string>
@@ -294,6 +382,7 @@
     <string name="google_drive_restore_failed">Drive\'dan geri yüklenemedi</string>
     <string name="google_drive_sign_in_failed">Google ile bağlanılamadı</string>
     <string name="backup_saved">Yedek başarıyla kaydedildi</string>
+    <string name="setting_updated_snackbar">Ayar başarıyla değiştirildi</string>
     <string name="backup_save_failed">Yedek kaydedilemedi</string>
     <string name="file_read_failed">Dosya okunamadı</string>
     <string name="backup_restored">Yedek geri yüklendi</string>
@@ -356,6 +445,13 @@
     <string name="reminder_notification_title">Hatırlatma</string>
     <string name="reminder_action_snooze">Ertele</string>
     <string name="reminder_action_complete">Tamamla</string>
+    <string name="snooze_confirmation_title">Ertelendi</string>
+    <string name="snooze_confirmation_text">"%1$s" %2$d dakika ertelendi</string>
+    <string name="complete_confirmation_title">Tamamlandı</string>
+    <string name="complete_confirmation_text">"%1$s" başarıyla tamamlandı</string>
+    <string name="settings_snooze_duration_title">Erteleme süresi</string>
+    <string name="settings_snooze_duration_subtitle">Bildirimdeki "Ertele" butonuna basınca görev kaç dakika sonraya ertelensin?</string>
+    <string name="snooze_minutes_format">%d dk</string>
     <string name="weekly_digest_channel_name">Haftalık özet</string>
     <string name="weekly_digest_channel_description">Haftalık tamamlanan görev özeti ve hatırlatma bildirimi</string>
     <string name="weekly_digest_title">Haftalık özet</string>

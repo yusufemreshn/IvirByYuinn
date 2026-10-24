@@ -41,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -158,7 +159,11 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
     var showCalendar by remember { mutableStateOf(false) }
     var showStats by remember { mutableStateOf(false) }
     var showCategories by remember { mutableStateOf(false) }
-    var showSettings by remember { mutableStateOf(false) }
+    // rememberSaveable: Ayarlar > Görünüm'de Yazı Boyutu/Dil değişince
+    // Activity recreate() oluyor, bkz. AppearanceSettingsScreen. Bu
+    // sayede recreate sonrası kullanıcı Ayarlar açıkken görev listesine
+    // değil yine Ayarlar'a dönüyor.
+    var showSettings by rememberSaveable { mutableStateOf(false) }
     var showArchivedLists by remember { mutableStateOf(false) }
     var showFocusMode by remember { mutableStateOf(false) }
     var showBulkDeleteConfirm by remember { mutableStateOf(false) }

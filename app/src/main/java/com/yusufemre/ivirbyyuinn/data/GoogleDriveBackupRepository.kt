@@ -2,6 +2,7 @@ package com.yusufemre.ivirbyyuinn.data
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -32,7 +33,14 @@ import java.io.ByteArrayOutputStream
 class GoogleDriveBackupRepository(private val context: Context) {
 
     fun getSignInClient(): GoogleSignInClient {
+        // DEFAULT_SIGN_IN sadece requestId()+requestProfile() istiyor,
+        // requestEmail() İÇERMİYOR; bunu elle eklemezsek GoogleSignInAccount
+        // başarıyla dönse bile .email alanı null kalıyor (giriş aslında
+        // başarılıyken "bağlanılamadı" gibi göründüğü hatanın kök nedeni
+        // buydu). Ayarlar'da "Bağlı hesap: ..." satırı için e-postaya
+        // ihtiyacımız var.
         val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
             .requestScopes(Scope(DriveScopes.DRIVE_APPDATA))
             .build()
         return GoogleSignIn.getClient(context, options)
@@ -51,6 +59,11 @@ class GoogleDriveBackupRepository(private val context: Context) {
         val account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException::class.java)
         account.email
     } catch (e: ApiException) {
+        // statusCode anlamlı hata ayıklama bilgisi taşıyor (ör. 10 =
+        // DEVELOPER_ERROR, 7 = NETWORK_ERROR, 12501 = SIGN_IN_CANCELLED),
+        // kalıcı olarak logluyoruz, UI'a göstermiyoruz çünkü kullanıcıya
+        // anlamsız gelir.
+        Log.e("GoogleDriveBackup", "Sign-in failed: statusCode=${e.statusCode}, message=${e.message}", e)
         null
     }
 

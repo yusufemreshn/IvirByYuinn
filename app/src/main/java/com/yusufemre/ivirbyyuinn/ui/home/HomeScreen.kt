@@ -1,50 +1,44 @@
 package com.yusufemre.ivirbyyuinn.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathMeasure
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yusufemre.ivirbyyuinn.IvirApplication
 import com.yusufemre.ivirbyyuinn.R
 import com.yusufemre.ivirbyyuinn.ui.settings.SettingsScreen
-import com.yusufemre.ivirbyyuinn.ui.theme.Motion
-import com.yusufemre.ivirbyyuinn.ui.theme.rememberReducedMotionEnabled
 import com.yusufemre.ivirbyyuinn.ui.util.AnimatedDialog
 import com.yusufemre.ivirbyyuinn.ui.util.findActivity
 
@@ -52,9 +46,20 @@ import com.yusufemre.ivirbyyuinn.ui.util.findActivity
 // ekranı: MainActivity bunu sadece BİR KERE gösteriyor, arka plandan
 // her dönüşte değil (o zaten AppLockScreen'in işi, bkz. Faz 7a).
 // Widget'ın "+" butonundan geldiysek bu ekran tamamen atlanıyor.
+//
+// Kullanıcı geri bildirimi: eski ekran her şeyi dikeyde ortalıyordu, bol
+// boş alan vardı, görev sayısı küçük bir satırdı, ortadaki tik rozeti de
+// "saçma" bulundu. Yeniden tasarım: rozet tamamen kalktı; bekleyen görev
+// sayısı artık ekranın BAŞLIĞI, "Ivır" küçük bir üst işarete (wordmark)
+// geri çekildi, üç aksiyon ekranın altına yaslanan yükseltilmiş bir
+// "sayfaya" toplandı, ortada kalan boşluğa da rastgele bir söz geliyor.
 @Composable
 fun HomeScreen(onEnterApp: () -> Unit) {
-    var showSettings by remember { mutableStateOf(false) }
+    // rememberSaveable: Ayarlar > Görünüm'de Yazı Boyutu/Dil değişince
+    // Activity recreate() oluyor, bkz. AppearanceSettingsScreen. Bu
+    // sayede recreate sonrası kullanıcı Ayarlar açıkken HomeScreen'e değil
+    // yine Ayarlar'a dönüyor.
+    var showSettings by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
 
     // Faz 10b: HomeScreen artık kendi (küçük, sadece bunun için var olan)
@@ -70,61 +75,83 @@ fun HomeScreen(onEnterApp: () -> Unit) {
     )
     val activeTaskCount by homeViewModel.activeTaskCount.collectAsStateWithLifecycle()
 
+    // remember (activeTaskCount'a bağlı DEĞİL): ekran süreç başına bir kez
+    // görüldüğü için söz de süreç başına bir kez seçiliyor, görev sayısı
+    // güncellendikçe (ör. widget'tan gelen bir değişiklik) rastgele rastgele
+    // değişip dikkat dağıtmıyor.
+    val quotes = stringArrayResource(R.array.home_quotes)
+    val quote = remember { quotes.random() }
+
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+                .padding(innerPadding),
         ) {
-            HomeLogo()
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                text = stringResource(R.string.home_tagline),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 4.dp),
-            )
-            // Bekleyen görev sayısı henüz yüklenmediyse (null) ya da 0'sa
-            // bu satırı hiç göstermiyoruz, "0 görev seni bekliyor" gibi
-            // tuhaf/anlamsız bir cümle kurmaktansa sessiz kalmayı
-            // tercih ettik.
-            val count = activeTaskCount
-            AnimatedVisibility(visible = count != null && count > 0) {
-                if (count != null && count > 0) {
-                    Text(
-                        text = pluralStringResource(R.plurals.home_active_tasks_summary, count, count),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 8.dp),
-                    )
-                }
+            Column(modifier = Modifier.padding(horizontal = 28.dp, vertical = 28.dp)) {
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = 1.sp,
+                )
+                Text(
+                    text = homeHeadline(activeTaskCount),
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(top = 18.dp),
+                )
+                Text(
+                    text = stringResource(R.string.home_tagline),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 10.dp),
+                )
             }
-            Spacer(Modifier.height(32.dp))
 
-            Button(onClick = onEnterApp, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.home_enter_app))
-            }
-            OutlinedButton(
-                onClick = { showSettings = true },
-                modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                contentAlignment = Alignment.Center,
             ) {
-                Text(stringResource(R.string.switcher_settings))
+                // Uygulamanın geri kalanı (TopAppBar, butonlar, metinler)
+                // hep sans-serif; burada BİLEREK FontFamily.Serif + italik
+                // kullanıyoruz, ekranın tek "ses" anı bir arayüz etiketi
+                // gibi değil, biri sana bir şey söylüyormuş gibi okunsun.
+                Text(
+                    text = "“$quote”",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontFamily = FontFamily.Serif,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.82f),
+                )
             }
-            TextButton(
-                onClick = { context.findActivity()?.finish() },
-                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(stringResource(R.string.home_exit))
+                Column(modifier = Modifier.padding(24.dp)) {
+                    Button(onClick = onEnterApp, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.home_enter_app))
+                    }
+                    OutlinedButton(
+                        onClick = { showSettings = true },
+                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    ) {
+                        Text(stringResource(R.string.switcher_settings))
+                    }
+                    TextButton(
+                        onClick = { context.findActivity()?.finish() },
+                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                    ) {
+                        Text(stringResource(R.string.home_exit))
+                    }
+                }
             }
         }
     }
@@ -136,48 +163,29 @@ fun HomeScreen(onEnterApp: () -> Unit) {
     }
 }
 
-// Uygulama ikonuyla aynı görsel dili tekrar kullanan, elden çizilmiş
-// (ekstra ikon/illüstrasyon paketi yok) küçük bir amblem: Canvas
-// kullanımı EmptyTaskList/WeeklyBarChart'takiyle aynı desen.
-//
-// Faz 10b: HomeScreen sadece süreç başına BİR KERE görüldüğü için, burada
-// biraz daha belirgin bir giriş anı hak ediyor, rozet önce hafifçe
-// büyüyerek "pop" yapıyor, ARDINDAN içindeki tik işareti uçtan uca
-// çizilerek beliriyor (PathMeasure ile yolun sadece bir kısmını çizmek).
+// Üç duruma göre farklı başlık: sayı yüklenmediyse (null) sessizce uygulama
+// adını, sıfırsa "bekleyen yok" cümlesini, doluysa sayıyı (vurgulanmış
+// renkte) içeren cümleyi gösteriyor. "0 görev seni bekliyor" gibi tuhaf/
+// anlamsız bir cümle kurmaktan bilerek kaçınıyoruz.
 @Composable
-private fun HomeLogo() {
-    val badgeColor = MaterialTheme.colorScheme.primary
-    val checkColor = MaterialTheme.colorScheme.onPrimary
-    val reducedMotion = rememberReducedMotionEnabled()
-
-    val badgeScale = remember { Animatable(if (reducedMotion) 1f else 0.6f) }
-    val checkProgress = remember { Animatable(if (reducedMotion) 1f else 0f) }
-    LaunchedEffect(reducedMotion) {
-        if (!reducedMotion) {
-            badgeScale.animateTo(1f, animationSpec = Motion.emphasizedSpring())
-            checkProgress.animateTo(1f, animationSpec = tween(Motion.SCREEN))
+private fun homeHeadline(count: Int?) = when {
+    count == null -> buildAnnotatedString { append(stringResource(R.string.app_name)) }
+    count == 0 -> buildAnnotatedString { append(stringResource(R.string.home_headline_empty)) }
+    else -> {
+        val text = pluralStringResource(R.plurals.home_active_tasks_summary, count, count)
+        val numberText = count.toString()
+        buildAnnotatedString {
+            // Her iki dilde de ("%d görev..."/"%d task(s)...") sayı
+            // CÜMLENİN BAŞINDA, bu yüzden sadece baştaki rakamları
+            // vurguluyoruz; beklenmedik bir biçimle karşılaşırsak (ör.
+            // ileride farklı bir dil eklenirse) hiç vurgu yapmadan tüm
+            // metni olduğu gibi yazıyoruz, kırılmaya karşı güvenli.
+            if (text.startsWith(numberText)) {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) { append(numberText) }
+                append(text.substring(numberText.length))
+            } else {
+                append(text)
+            }
         }
-    }
-
-    Canvas(modifier = Modifier.size(88.dp).scale(badgeScale.value)) {
-        drawCircle(color = badgeColor)
-        val strokeWidth = 7.dp.toPx()
-        val checkPath = Path().apply {
-            moveTo(size.width * 0.28f, size.height * 0.54f)
-            lineTo(size.width * 0.44f, size.height * 0.70f)
-            lineTo(size.width * 0.74f, size.height * 0.36f)
-        }
-        // Tik işaretinin sadece "şu ana kadar çizilmiş" kısmını almak için
-        // PathMeasure kullanıyoruz: tam yolun uzunluğunu ölçüp, 0'dan
-        // checkProgress kadarlık bir dilimini yeni bir Path'e kopyalıyoruz.
-        val measure = PathMeasure()
-        measure.setPath(checkPath, forceClosed = false)
-        val animatedCheck = Path()
-        measure.getSegment(0f, measure.length * checkProgress.value, animatedCheck, startWithMoveTo = true)
-        drawPath(
-            path = animatedCheck,
-            color = checkColor,
-            style = Stroke(width = strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round),
-        )
     }
 }

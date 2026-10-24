@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yusufemre.ivirbyyuinn.data.GoogleDriveBackupPreferences
 import com.yusufemre.ivirbyyuinn.domain.CompleteGoogleDriveSignInUseCase
+import com.yusufemre.ivirbyyuinn.domain.DeleteAllDriveBackupsUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetGoogleDriveAccountEmailUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetGoogleDriveBackupPreferencesUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetGoogleDriveSignInIntentUseCase
 import com.yusufemre.ivirbyyuinn.domain.RestoreBackupFromDriveUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetGoogleDriveAutoBackupEnabledUseCase
+import com.yusufemre.ivirbyyuinn.domain.SetGoogleDriveAutoBackupScheduleUseCase
 import com.yusufemre.ivirbyyuinn.domain.SignOutGoogleDriveUseCase
 import com.yusufemre.ivirbyyuinn.domain.UploadBackupToDriveUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +32,8 @@ class GoogleDriveViewModel(
     private val restoreBackupFromDriveUseCase: RestoreBackupFromDriveUseCase,
     getGoogleDriveBackupPreferencesUseCase: GetGoogleDriveBackupPreferencesUseCase,
     private val setGoogleDriveAutoBackupEnabledUseCase: SetGoogleDriveAutoBackupEnabledUseCase,
+    private val setGoogleDriveAutoBackupScheduleUseCase: SetGoogleDriveAutoBackupScheduleUseCase,
+    private val deleteAllDriveBackupsUseCase: DeleteAllDriveBackupsUseCase,
 ) : ViewModel() {
 
     // Oturum durumu SharedPreferences'ta DEĞİL, Google Play Services'in
@@ -44,8 +48,13 @@ class GoogleDriveViewModel(
 
     fun signInIntent(): Intent = getGoogleDriveSignInIntentUseCase()
 
-    fun onSignInResult(data: Intent?) {
-        _accountEmail.value = completeGoogleDriveSignInUseCase(data)
+    // DataBackupSettingsScreen başarısız girişte ekrana gerçek sebebi
+    // basabilsin diye Result'ı olduğu gibi döndürüyoruz, state'i de biz
+    // burada güncelliyoruz (başarılıysa e-posta, değilse null).
+    fun onSignInResult(data: Intent?): Result<String?> {
+        val result = completeGoogleDriveSignInUseCase(data)
+        _accountEmail.value = result.getOrNull()
+        return result
     }
 
     fun signOut() {
@@ -56,7 +65,13 @@ class GoogleDriveViewModel(
 
     suspend fun restoreBackup(): Result<Unit> = restoreBackupFromDriveUseCase()
 
+    suspend fun deleteAllBackups(): Result<Unit> = deleteAllDriveBackupsUseCase()
+
     fun setAutoBackupEnabled(enabled: Boolean) {
         setGoogleDriveAutoBackupEnabledUseCase(enabled)
+    }
+
+    fun setAutoBackupSchedule(minuteOfDay: Int, intervalDays: Int) {
+        setGoogleDriveAutoBackupScheduleUseCase(minuteOfDay, intervalDays)
     }
 }

@@ -92,6 +92,8 @@ fun SettingsScreen(onClose: () -> Unit) {
             restoreBackupFromDriveUseCase = application.restoreBackupFromDriveUseCase,
             getGoogleDriveBackupPreferencesUseCase = application.getGoogleDriveBackupPreferencesUseCase,
             setGoogleDriveAutoBackupEnabledUseCase = application.setGoogleDriveAutoBackupEnabledUseCase,
+            setGoogleDriveAutoBackupScheduleUseCase = application.setGoogleDriveAutoBackupScheduleUseCase,
+            deleteAllDriveBackupsUseCase = application.deleteAllDriveBackupsUseCase,
         ),
     )
     val driveAccountEmail by googleDriveViewModel.accountEmail.collectAsStateWithLifecycle()

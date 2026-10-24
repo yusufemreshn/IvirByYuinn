@@ -57,6 +57,7 @@ fun TrashScreen(
     onPermanentlyDelete: (Task, onDeleted: () -> Unit) -> Unit,
     onDeleteAll: (onDeleted: () -> Unit) -> Unit,
     onClose: () -> Unit,
+    confirmOnDelete: Boolean = true,
 ) {
     var showDeleteAllConfirm by remember { mutableStateOf(false) }
 
@@ -86,7 +87,15 @@ fun TrashScreen(
                     // Çöp kutusu boşken bu butonun bir anlamı yok, o yüzden
                     // sadece silinecek bir şey varken gösteriyoruz.
                     if (deletedTasks.isNotEmpty()) {
-                        IconButton(onClick = { showDeleteAllConfirm = true }) {
+                        IconButton(onClick = {
+                            if (confirmOnDelete) {
+                                showDeleteAllConfirm = true
+                            } else {
+                                onDeleteAll {
+                                    coroutineScope.launch { snackbarHostState.showSnackbar(trashEmptiedMessage) }
+                                }
+                            }
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = stringResource(R.string.delete_all_cd),
@@ -136,6 +145,7 @@ fun TrashScreen(
                                 }
                             }
                         },
+                        confirmOnDelete = confirmOnDelete,
                     )
                 }
             }
@@ -208,6 +218,7 @@ private fun TrashRow(
     task: Task,
     onRestore: () -> Unit,
     onPermanentlyDelete: () -> Unit,
+    confirmOnDelete: Boolean = true,
 ) {
     var showConfirmDialog by remember { mutableStateOf(false) }
 
@@ -234,7 +245,9 @@ private fun TrashRow(
             TextButton(onClick = onRestore) {
                 Text(stringResource(R.string.action_restore))
             }
-            IconButton(onClick = { showConfirmDialog = true }) {
+            IconButton(onClick = {
+                if (confirmOnDelete) showConfirmDialog = true else onPermanentlyDelete()
+            }) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.permanently_delete_cd))
             }
         }

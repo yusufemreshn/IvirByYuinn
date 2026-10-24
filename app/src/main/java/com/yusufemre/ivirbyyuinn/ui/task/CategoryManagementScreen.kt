@@ -58,6 +58,7 @@ fun CategoryManagementScreen(
     onAddCategory: (name: String, colorHex: String, onCreated: () -> Unit) -> Unit,
     onDeleteCategory: (Category, onDeleted: () -> Unit) -> Unit,
     onClose: () -> Unit,
+    confirmOnDelete: Boolean = true,
 ) {
     var showAddDialog by remember { mutableStateOf(false) }
     var categoryPendingDelete by remember { mutableStateOf<Category?>(null) }
@@ -126,7 +127,17 @@ fun CategoryManagementScreen(
                                 .weight(1f)
                                 .padding(start = 16.dp),
                         )
-                        IconButton(onClick = { categoryPendingDelete = category }) {
+                        IconButton(onClick = {
+                            if (confirmOnDelete) {
+                                categoryPendingDelete = category
+                            } else {
+                                onDeleteCategory(category) {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar(String.format(categoryDeletedTemplate, category.name))
+                                    }
+                                }
+                            }
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = stringResource(R.string.delete_category_cd),

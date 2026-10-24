@@ -56,6 +56,7 @@ fun ArchiveScreen(
     onUnarchive: (Task, onUnarchived: () -> Unit) -> Unit,
     onDelete: (Task, onDeleted: () -> Unit) -> Unit,
     onClose: () -> Unit,
+    confirmOnDelete: Boolean = true,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -119,6 +120,7 @@ fun ArchiveScreen(
                                 }
                             }
                         },
+                        confirmOnDelete = confirmOnDelete,
                     )
                 }
             }
@@ -131,6 +133,7 @@ private fun ArchiveRow(
     task: Task,
     onUnarchive: () -> Unit,
     onDelete: () -> Unit,
+    confirmOnDelete: Boolean = true,
 ) {
     var showConfirmDialog by remember { mutableStateOf(false) }
 
@@ -162,7 +165,9 @@ private fun ArchiveRow(
                 TextButton(onClick = onUnarchive) {
                     Text(stringResource(R.string.action_unarchive_task))
                 }
-                IconButton(onClick = { showConfirmDialog = true }) {
+                IconButton(onClick = {
+                    if (confirmOnDelete) showConfirmDialog = true else onDelete()
+                }) {
                     Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete_task_cd))
                 }
             }

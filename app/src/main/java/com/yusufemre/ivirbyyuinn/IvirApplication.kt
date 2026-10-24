@@ -84,7 +84,9 @@ import com.yusufemre.ivirbyyuinn.domain.SetAppColorThemeUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetAppLockPinUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetConfirmationPreferencesUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetFontScalePreferenceUseCase
+import com.yusufemre.ivirbyyuinn.domain.DeleteAllDriveBackupsUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetGoogleDriveAutoBackupEnabledUseCase
+import com.yusufemre.ivirbyyuinn.domain.SetGoogleDriveAutoBackupScheduleUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetLanguagePreferenceUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetQuietHoursUseCase
 import com.yusufemre.ivirbyyuinn.domain.SetShowHomeScreenPreferenceUseCase
@@ -137,7 +139,10 @@ class IvirApplication : Application() {
         // daha önce Drive otomatik yedeklemeyi açtıysa WorkManager kaydının
         // ayakta olduğundan emin oluyoruz.
         if (googleDrivePreferencesRepository.isAutoBackupEnabledNow()) {
-            googleDriveBackupScheduler.schedule()
+            googleDriveBackupScheduler.schedule(
+                minuteOfDay = googleDrivePreferencesRepository.getAutoBackupMinuteOfDayNow(),
+                intervalHours = googleDrivePreferencesRepository.getAutoBackupIntervalHoursNow(),
+            )
         }
     }
 
@@ -272,6 +277,12 @@ class IvirApplication : Application() {
     }
     val setGoogleDriveAutoBackupEnabledUseCase by lazy {
         SetGoogleDriveAutoBackupEnabledUseCase(googleDrivePreferencesRepository, googleDriveBackupScheduler)
+    }
+    val setGoogleDriveAutoBackupScheduleUseCase by lazy {
+        SetGoogleDriveAutoBackupScheduleUseCase(googleDrivePreferencesRepository, googleDriveBackupScheduler)
+    }
+    val deleteAllDriveBackupsUseCase by lazy {
+        DeleteAllDriveBackupsUseCase(googleDriveBackupRepository, googleDrivePreferencesRepository)
     }
 
     val isAppLockEnabledUseCase by lazy { IsAppLockEnabledUseCase(appLockRepository) }

@@ -31,8 +31,9 @@ import com.yusufemre.ivirbyyuinn.R
 
 // SettingsScreen'in diğer alt bölümleri gibi (Çöp kutusu, Takvim vb.)
 // TaskListScreen değil, doğrudan SettingsScreen tarafından tam ekran bir
-// Dialog içinde açılıyor; kullanıcı isteğiyle 4 onay diyaloğu (görev/alt
-// görev × silme/tamamlama) tek tek açılıp kapatılabiliyor.
+// Dialog içinde açılıyor; kullanıcı isteğiyle uygulamadaki TÜM "emin misin"
+// onay diyalogları (görev/alt görev silme-tamamlama-arşivleme-ekleme,
+// kategori/liste/arşiv/çöp kutusu silme) tek tek açılıp kapatılabiliyor.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmationSettingsScreen(onClose: () -> Unit) {
@@ -93,6 +94,14 @@ fun ConfirmationSettingsScreen(onClose: () -> Unit) {
                 },
             )
             ConfirmationToggleRow(
+                title = stringResource(R.string.confirm_task_archive_setting_title),
+                checked = preferences.confirmTaskArchive,
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmTaskArchive = it))
+                    notifySettingChanged()
+                },
+            )
+            ConfirmationToggleRow(
                 title = stringResource(R.string.confirm_subtask_delete_setting_title),
                 checked = preferences.confirmSubtaskDelete,
                 onCheckedChange = {
@@ -105,6 +114,46 @@ fun ConfirmationSettingsScreen(onClose: () -> Unit) {
                 checked = preferences.confirmSubtaskComplete,
                 onCheckedChange = {
                     viewModel.setConfirmationPreferences(preferences.copy(confirmSubtaskComplete = it))
+                    notifySettingChanged()
+                },
+            )
+            ConfirmationToggleRow(
+                title = stringResource(R.string.confirm_subtask_add_setting_title),
+                checked = preferences.confirmSubtaskAdd,
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmSubtaskAdd = it))
+                    notifySettingChanged()
+                },
+            )
+            ConfirmationToggleRow(
+                title = stringResource(R.string.confirm_category_delete_setting_title),
+                checked = preferences.confirmCategoryDelete,
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmCategoryDelete = it))
+                    notifySettingChanged()
+                },
+            )
+            ConfirmationToggleRow(
+                title = stringResource(R.string.confirm_list_delete_setting_title),
+                checked = preferences.confirmListDelete,
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmListDelete = it))
+                    notifySettingChanged()
+                },
+            )
+            ConfirmationToggleRow(
+                title = stringResource(R.string.confirm_archived_task_delete_setting_title),
+                checked = preferences.confirmArchivedTaskDelete,
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmArchivedTaskDelete = it))
+                    notifySettingChanged()
+                },
+            )
+            ConfirmationToggleRow(
+                title = stringResource(R.string.confirm_trash_delete_setting_title),
+                checked = preferences.confirmTrashDelete,
+                onCheckedChange = {
+                    viewModel.setConfirmationPreferences(preferences.copy(confirmTrashDelete = it))
                     notifySettingChanged()
                 },
             )

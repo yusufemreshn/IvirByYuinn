@@ -373,7 +373,7 @@
     <string name="google_drive_backup_now">Şimdi Drive\'a yedekle</string>
     <string name="google_drive_restore">Drive\'dan geri yükle</string>
     <string name="google_drive_auto_backup_title">Otomatik yedekleme</string>
-    <string name="google_drive_auto_backup_subtitle">Günde bir kez, Drive\'a otomatik yedek al.</string>
+    <string name="google_drive_auto_backup_subtitle">Seçtiğin saatte, seçtiğin sıklıkla Drive\'a otomatik yedek al.</string>
     <string name="google_drive_last_backup">Son yedek: %1$s</string>
     <string name="google_drive_never_backed_up">Henüz yedek alınmadı</string>
     <string name="google_drive_backup_success">Drive\'a yedeklendi</string>
@@ -381,6 +381,17 @@
     <string name="google_drive_restore_success">Drive\'dan geri yüklendi</string>
     <string name="google_drive_restore_failed">Drive\'dan geri yüklenemedi</string>
     <string name="google_drive_sign_in_failed">Google ile bağlanılamadı</string>
+    <string name="google_drive_auto_backup_time_label">Yedekleme saati</string>
+    <string name="google_drive_auto_backup_interval_label">Sıklık</string>
+    <string name="google_drive_auto_backup_interval_daily">Her gün</string>
+    <string name="google_drive_auto_backup_interval_every_n_days">%1$d günde bir</string>
+    <string name="google_drive_auto_backup_interval_every_n_hours">%1$d saatte bir</string>
+    <string name="google_drive_auto_backup_interval_weekly">Haftada bir</string>
+    <string name="google_drive_delete_backups">Drive yedeklerini sil</string>
+    <string name="google_drive_delete_backups_warning_title">Drive yedekleri silinsin mi?</string>
+    <string name="google_drive_delete_backups_warning_text">Drive\'daki gizli alana kaydedilmiş TÜM yedekler kalıcı olarak silinecek. Bu işlem geri alınamaz, cihazındaki görevlere bir şey olmaz.</string>
+    <string name="google_drive_delete_backups_success">Drive yedekleri silindi</string>
+    <string name="google_drive_delete_backups_failed">Drive yedekleri silinemedi</string>
     <string name="backup_saved">Yedek başarıyla kaydedildi</string>
     <string name="setting_updated_snackbar">Ayar başarıyla değiştirildi</string>
     <string name="backup_save_failed">Yedek kaydedilemedi</string>
@@ -424,6 +435,12 @@
     <string name="confirm_task_complete_setting_title">Görev tamamlanırken sor</string>
     <string name="confirm_subtask_delete_setting_title">Alt görev silinirken sor</string>
     <string name="confirm_subtask_complete_setting_title">Alt görev tamamlanırken sor</string>
+    <string name="confirm_task_archive_setting_title">Görev arşivlenirken sor</string>
+    <string name="confirm_subtask_add_setting_title">Alt görev eklenirken sor</string>
+    <string name="confirm_category_delete_setting_title">Kategori silinirken sor</string>
+    <string name="confirm_list_delete_setting_title">Liste silinirken sor</string>
+    <string name="confirm_archived_task_delete_setting_title">Arşivden görev silinirken sor</string>
+    <string name="confirm_trash_delete_setting_title">Çöp kutusundan silinirken sor</string>
 
     <!-- ui/settings/SettingsScreen: Hakkında bölümü -->
     <string name="about_title">Hakkında</string>

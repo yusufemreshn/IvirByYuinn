@@ -48,6 +48,7 @@ fun ArchivedListsScreen(
     onUnarchive: (TaskListEntity, onUnarchived: () -> Unit) -> Unit,
     onDelete: (TaskListEntity, onResult: (deleted: Boolean) -> Unit) -> Unit,
     onClose: () -> Unit,
+    confirmOnDelete: Boolean = true,
 ) {
     var taskListPendingDelete by remember { mutableStateOf<TaskListEntity?>(null) }
 
@@ -119,7 +120,19 @@ fun ArchivedListsScreen(
                             }) {
                                 Text(stringResource(R.string.action_unarchive))
                             }
-                            IconButton(onClick = { taskListPendingDelete = taskList }) {
+                            IconButton(onClick = {
+                                if (confirmOnDelete) {
+                                    taskListPendingDelete = taskList
+                                } else {
+                                    onDelete(taskList) { deleted ->
+                                        coroutineScope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                if (deleted) String.format(deletedTemplate, taskList.name) else cannotDeleteLastListMessage,
+                                            )
+                                        }
+                                    }
+                                }
+                            }) {
                                 Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.action_delete))
                             }
                         }

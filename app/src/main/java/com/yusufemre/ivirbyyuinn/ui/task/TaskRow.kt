@@ -136,6 +136,7 @@ fun TaskRow(
     // kapatabiliyor; false ise dialog hiç açılmadan işlem direkt yapılıyor.
     confirmOnDelete: Boolean = true,
     confirmOnComplete: Boolean = true,
+    confirmOnArchive: Boolean = true,
     confirmOnSubtaskComplete: Boolean = true,
     modifier: Modifier = Modifier,
     // Sadece SortOption.MANUAL seçiliyken dolu geliyor, TaskListScreen
@@ -185,6 +186,9 @@ fun TaskRow(
     }
     val requestToggle = {
         if (confirmOnComplete) showToggleConfirm = true else onToggleDone(task)
+    }
+    val requestArchive = {
+        if (confirmOnArchive) showArchiveConfirm = true else onArchive(task)
     }
 
     // confirmValueChange bu Compose sürümünde deprecated işaretlenmiş
@@ -389,6 +393,7 @@ fun TaskRow(
                         recurrenceDaily = recurrenceDaily,
                         recurrenceWeekly = recurrenceWeekly,
                         recurrenceMonthly = recurrenceMonthly,
+                        confirmOnSubtaskComplete = confirmOnSubtaskComplete,
                         modifier = Modifier.weight(1f).padding(start = 12.dp),
                     )
                     // Kullanıcı isteği: görev tamamlandı işaretlenince sil
@@ -398,7 +403,7 @@ fun TaskRow(
                     if (task.isDone) {
                         IconButton(onClick = {
                             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                            showArchiveConfirm = true
+                            requestArchive()
                         }) {
                             Icon(
                                 imageVector = IvirIcons.Archive,

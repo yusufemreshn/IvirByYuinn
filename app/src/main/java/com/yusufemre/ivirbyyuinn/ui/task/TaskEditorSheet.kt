@@ -181,6 +181,7 @@ fun TaskEditorSheet(
     // ise ilgili dialog hiç açılmadan işlem direkt yapılıyor.
     confirmOnSubtaskDelete: Boolean = true,
     confirmOnSubtaskComplete: Boolean = true,
+    confirmOnSubtaskAdd: Boolean = true,
 ) {
     val context = LocalContext.current
     // Kullanıcı geri bildirimi: özellikle "Görevi düzenle" ekranında (Alt
@@ -538,6 +539,7 @@ fun TaskEditorSheet(
                     onDeleteSubtask = onDeleteSubtask,
                     confirmOnDelete = confirmOnSubtaskDelete,
                     confirmOnComplete = confirmOnSubtaskComplete,
+                    confirmOnAdd = confirmOnSubtaskAdd,
                 )
             }
 
@@ -746,6 +748,7 @@ private fun SubtaskSection(
     onDeleteSubtask: (Subtask) -> Unit,
     confirmOnDelete: Boolean = true,
     confirmOnComplete: Boolean = true,
+    confirmOnAdd: Boolean = true,
 ) {
     val subtasks by subtasksFlow.collectAsStateWithLifecycle(initialValue = emptyList())
     var newSubtaskTitle by remember { mutableStateOf("") }
@@ -798,7 +801,14 @@ private fun SubtaskSection(
         )
         IconButton(onClick = {
             val trimmedTitle = newSubtaskTitle.trim()
-            if (trimmedTitle.isNotEmpty()) pendingNewSubtaskTitle = trimmedTitle
+            if (trimmedTitle.isNotEmpty()) {
+                if (confirmOnAdd) {
+                    pendingNewSubtaskTitle = trimmedTitle
+                } else {
+                    onAddSubtask(trimmedTitle)
+                    newSubtaskTitle = ""
+                }
+            }
         }) {
             Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_subtask_cd))
         }

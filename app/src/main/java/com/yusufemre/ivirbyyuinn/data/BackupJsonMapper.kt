@@ -26,6 +26,8 @@ fun BackupSnapshot.toJson(): String {
         val obj = JSONObject()
         obj.put("id", list.id)
         obj.put("name", list.name)
+        obj.put("sortOrder", list.sortOrder)
+        obj.put("isArchived", list.isArchived)
         taskListsArray.put(obj)
     }
     root.put("taskLists", taskListsArray)
@@ -59,6 +61,8 @@ fun BackupSnapshot.toJson(): String {
         obj.put("recurrence", task.recurrence.level)
         obj.put("isDeleted", task.isDeleted)
         obj.put("manualOrder", task.manualOrder)
+        obj.put("isArchived", task.isArchived)
+        obj.put("completedAt", task.completedAt ?: JSONObject.NULL)
         tasksArray.put(obj)
     }
     root.put("tasks", tasksArray)
@@ -101,7 +105,17 @@ fun parseBackupJson(json: String): BackupSnapshot {
     val taskListsArray = root.getJSONArray("taskLists")
     for (i in 0 until taskListsArray.length()) {
         val obj = taskListsArray.getJSONObject(i)
-        taskLists.add(TaskListEntity(id = obj.getLong("id"), name = obj.getString("name")))
+        taskLists.add(
+            TaskListEntity(
+                id = obj.getLong("id"),
+                name = obj.getString("name"),
+                // optInt/optBoolean: eski (bu alanlardan önceki) yedek
+                // dosyalarında bu alanlar yok, o zaman Entity'nin kendi
+                // varsayılanıyla (0/false) aynı değere düşüyoruz.
+                sortOrder = obj.optInt("sortOrder", 0),
+                isArchived = obj.optBoolean("isArchived", false),
+            ),
+        )
     }
 
     val categories = mutableListOf<Category>()
@@ -135,6 +149,11 @@ fun parseBackupJson(json: String): BackupSnapshot {
                 recurrence = Recurrence.entries.first { it.level == obj.getInt("recurrence") },
                 isDeleted = obj.getBoolean("isDeleted"),
                 manualOrder = obj.getInt("manualOrder"),
+                // optBoolean/aşağıdaki null kontrolü: eski yedeklerde
+                // isArchived/completedAt henüz yoktu (bkz. taskLists'teki
+                // AYNI gerekçe), arşiv yoksa görev normal listeye düşüyor.
+                isArchived = obj.optBoolean("isArchived", false),
+                completedAt = if (obj.has("completedAt") && !obj.isNull("completedAt")) obj.getLong("completedAt") else null,
             ),
         )
     }

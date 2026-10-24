@@ -7,6 +7,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
@@ -55,16 +56,19 @@ class GoogleDriveBackupRepository(private val context: Context) {
     // getResult() ile senkron okumak Google'ın kendi dokümantasyonunun
     // önerdiği güvenli yöntem. Başarısız girişte (kullanıcı vazgeçti,
     // ağ hatası vb.) null dönüyoruz.
-    fun completeSignIn(data: Intent?): String? = try {
+    // 2026-10-25: eskiden statusCode sadece Log.e ile logcat'e yazılıp
+    // null dönülüyordu, UI "giriş başarısız" diye düz bir mesaj
+    // gösteriyordu, gerçek sebep (iptal mi, ağ hatası mı, DEVELOPER_ERROR
+    // mu) ekranda hiç görünmüyordu. GoogleSignInStatusCodes.getStatusCodeString
+    // statusCode'u ("SIGN_IN_CANCELLED", "NETWORK_ERROR" gibi) okunabilir
+    // bir metne çeviriyor, Result.failure ile UI'a kadar taşıyoruz.
+    fun completeSignIn(data: Intent?): Result<String?> = try {
         val account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException::class.java)
-        account.email
+        Result.success(account.email)
     } catch (e: ApiException) {
-        // statusCode anlamlı hata ayıklama bilgisi taşıyor (ör. 10 =
-        // DEVELOPER_ERROR, 7 = NETWORK_ERROR, 12501 = SIGN_IN_CANCELLED),
-        // kalıcı olarak logluyoruz, UI'a göstermiyoruz çünkü kullanıcıya
-        // anlamsız gelir.
+        val reason = GoogleSignInStatusCodes.getStatusCodeString(e.statusCode)
         Log.e("GoogleDriveBackup", "Sign-in failed: statusCode=${e.statusCode}, message=${e.message}", e)
-        null
+        Result.failure(Exception(reason, e))
     }
 
     fun getSignedInAccount(): GoogleSignInAccount? {
@@ -106,6 +110,20 @@ class GoogleDriveBackupRepository(private val context: Context) {
         val outputStream = ByteArrayOutputStream()
         drive.files().get(latest.id).executeMediaAndDownloadTo(outputStream)
         outputStream.toString("UTF-8")
+    }
+
+    // Kullanıcı isteği: appDataFolder'daki (görünmez, kullanıcının normal
+    // Drive arayüzünden erişemediği) TÜM yedekleri tek seferde silebilsin.
+    // pruneOldBackups'tan FARKLI: o en güncel KEEP_COUNT'u koruyordu, bu
+    // hiçbirini koruma, kullanıcı açıkça "hepsini sil" dediği için.
+    suspend fun deleteAllBackups(): Unit = withContext(Dispatchers.IO) {
+        val drive = driveServiceOrThrow()
+        val files = drive.files().list()
+            .setSpaces("appDataFolder")
+            .setFields("files(id)")
+            .execute()
+            .files ?: return@withContext
+        files.forEach { drive.files().delete(it.id).execute() }
     }
 
     private fun pruneOldBackups(drive: Drive) {

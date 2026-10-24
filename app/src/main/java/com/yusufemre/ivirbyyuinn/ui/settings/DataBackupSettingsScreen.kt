@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,7 +29,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -75,6 +79,8 @@ fun DataBackupSettingsScreen(onClose: () -> Unit) {
             restoreBackupFromDriveUseCase = application.restoreBackupFromDriveUseCase,
             getGoogleDriveBackupPreferencesUseCase = application.getGoogleDriveBackupPreferencesUseCase,
             setGoogleDriveAutoBackupEnabledUseCase = application.setGoogleDriveAutoBackupEnabledUseCase,
+            setGoogleDriveAutoBackupScheduleUseCase = application.setGoogleDriveAutoBackupScheduleUseCase,
+            deleteAllDriveBackupsUseCase = application.deleteAllDriveBackupsUseCase,
         ),
     )
     val driveAccountEmail by googleDriveViewModel.accountEmail.collectAsStateWithLifecycle()
@@ -86,6 +92,8 @@ fun DataBackupSettingsScreen(onClose: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     var showRestoreWarning by remember { mutableStateOf(false) }
     var showDriveRestoreWarning by remember { mutableStateOf(false) }
+    var showDriveDeleteBackupsWarning by remember { mutableStateOf(false) }
+    var showAutoBackupTimePicker by remember { mutableStateOf(false) }
 
     val backupSavedMessage = stringResource(R.string.backup_saved)
     val backupSaveFailedMessage = stringResource(R.string.backup_save_failed)
@@ -97,14 +105,17 @@ fun DataBackupSettingsScreen(onClose: () -> Unit) {
     val driveBackupFailedMessage = stringResource(R.string.google_drive_backup_failed)
     val driveRestoreSuccessMessage = stringResource(R.string.google_drive_restore_success)
     val driveRestoreFailedMessage = stringResource(R.string.google_drive_restore_failed)
+    val driveDeleteBackupsSuccessMessage = stringResource(R.string.google_drive_delete_backups_success)
+    val driveDeleteBackupsFailedMessage = stringResource(R.string.google_drive_delete_backups_failed)
     val settingChangedMessage = stringResource(R.string.setting_updated_snackbar)
 
     val driveSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) { result ->
-        googleDriveViewModel.onSignInResult(result.data)
-        if (googleDriveViewModel.accountEmail.value == null) {
-            coroutineScope.launch { snackbarHostState.showSnackbar(driveSignInFailedMessage) }
+        val signInResult = googleDriveViewModel.onSignInResult(result.data)
+        if (signInResult.isFailure) {
+            val message = driveFailureMessage(driveSignInFailedMessage, signInResult.exceptionOrNull())
+            coroutineScope.launch { snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Long) }
         }
     }
 
@@ -209,8 +220,12 @@ fun DataBackupSettingsScreen(onClose: () -> Unit) {
                         onClick = {
                             coroutineScope.launch {
                                 val result = googleDriveViewModel.uploadBackup()
-                                val message = if (result.isSuccess) driveBackupSuccessMessage else driveBackupFailedMessage
-                                snackbarHostState.showSnackbar(message)
+                                val message = if (result.isSuccess) {
+                                    driveBackupSuccessMessage
+                                } else {
+                                    driveFailureMessage(driveBackupFailedMessage, result.exceptionOrNull())
+                                }
+                                snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Long)
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -251,27 +266,93 @@ fun DataBackupSettingsScreen(onClose: () -> Unit) {
                         )
                     }
 
+                    // Switch kapalıyken de görünür kalıyor (QuietHoursRangePill
+                    // İLE AYNI gerekçe): kullanıcı açmadan ÖNCE de saat/sıklığı
+                    // ayarlayabilsin, açınca o tercihle başlasın.
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.google_drive_auto_backup_time_label),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f),
+                        )
+                        TextButton(onClick = { showAutoBackupTimePicker = true }) {
+                            Text(formatMinuteOfDay(driveBackupPreferences.autoBackupMinuteOfDay))
+                        }
+                    }
+
+                    Text(
+                        text = stringResource(R.string.google_drive_auto_backup_interval_label),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(top = 4.dp, bottom = 8.dp),
+                    )
+                    AutoBackupIntervalPicker(
+                        selectedHours = driveBackupPreferences.autoBackupIntervalHours,
+                        onSelect = { hours ->
+                            googleDriveViewModel.setAutoBackupSchedule(driveBackupPreferences.autoBackupMinuteOfDay, hours)
+                            coroutineScope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                                snackbarHostState.showSnackbar(settingChangedMessage)
+                            }
+                        },
+                    )
+
                     Text(
                         text = driveBackupPreferences.lastBackupAtMillis?.let {
                             stringResource(R.string.google_drive_last_backup, lastBackupFormatter.format(Date(it)))
                         } ?: stringResource(R.string.google_drive_never_backed_up),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = 12.dp),
                     )
 
-                    TextButton(
-                        onClick = {
-                            googleDriveViewModel.signOut()
-                            googleDriveViewModel.setAutoBackupEnabled(false)
-                        },
-                        modifier = Modifier.padding(top = 4.dp),
-                    ) {
-                        Text(stringResource(R.string.google_drive_disconnect))
+                    Row(modifier = Modifier.padding(top = 4.dp)) {
+                        TextButton(
+                            onClick = {
+                                googleDriveViewModel.signOut()
+                                googleDriveViewModel.setAutoBackupEnabled(false)
+                            },
+                        ) {
+                            Text(stringResource(R.string.google_drive_disconnect))
+                        }
+                        TextButton(onClick = { showDriveDeleteBackupsWarning = true }) {
+                            Text(stringResource(R.string.google_drive_delete_backups))
+                        }
                     }
                 }
             }
         }
+    }
+
+    if (showAutoBackupTimePicker) {
+        // NotificationSettingsScreen'deki Sessiz Saatler seçiciyle AYNI
+        // desen: rememberTimePickerState + AlertDialog içinde TimePicker.
+        val timePickerState = rememberTimePickerState(
+            initialHour = driveBackupPreferences.autoBackupMinuteOfDay / 60,
+            initialMinute = driveBackupPreferences.autoBackupMinuteOfDay % 60,
+        )
+        AlertDialog(
+            onDismissRequest = { showAutoBackupTimePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    googleDriveViewModel.setAutoBackupSchedule(
+                        timePickerState.hour * 60 + timePickerState.minute,
+                        driveBackupPreferences.autoBackupIntervalHours,
+                    )
+                    coroutineScope.launch {
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar(settingChangedMessage)
+                    }
+                    showAutoBackupTimePicker = false
+                }) { Text(stringResource(R.string.action_ok)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAutoBackupTimePicker = false }) { Text(stringResource(R.string.action_cancel)) }
+            },
+            text = { TimePicker(state = timePickerState) },
+        )
     }
 
     if (showRestoreWarning) {
@@ -304,7 +385,11 @@ fun DataBackupSettingsScreen(onClose: () -> Unit) {
                     showDriveRestoreWarning = false
                     coroutineScope.launch {
                         val result = googleDriveViewModel.restoreBackup()
-                        val message = if (result.isSuccess) driveRestoreSuccessMessage else driveRestoreFailedMessage
+                        val message = if (result.isSuccess) {
+                            driveRestoreSuccessMessage
+                        } else {
+                            driveFailureMessage(driveRestoreFailedMessage, result.exceptionOrNull())
+                        }
                         snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Long)
                     }
                 }) { Text(stringResource(R.string.action_proceed)) }
@@ -314,6 +399,92 @@ fun DataBackupSettingsScreen(onClose: () -> Unit) {
             },
         )
     }
+
+    if (showDriveDeleteBackupsWarning) {
+        AlertDialog(
+            onDismissRequest = { showDriveDeleteBackupsWarning = false },
+            title = { Text(stringResource(R.string.google_drive_delete_backups_warning_title)) },
+            text = { Text(stringResource(R.string.google_drive_delete_backups_warning_text)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDriveDeleteBackupsWarning = false
+                    coroutineScope.launch {
+                        val result = googleDriveViewModel.deleteAllBackups()
+                        val message = if (result.isSuccess) {
+                            driveDeleteBackupsSuccessMessage
+                        } else {
+                            driveFailureMessage(driveDeleteBackupsFailedMessage, result.exceptionOrNull())
+                        }
+                        snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Long)
+                    }
+                }) { Text(stringResource(R.string.action_proceed)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDriveDeleteBackupsWarning = false }) { Text(stringResource(R.string.action_cancel)) }
+            },
+        )
+    }
+}
+
+// NotificationSettingsScreen.formatMinuteOfDay İLE AYNI fikir (gece
+// yarısından geçen dakikayı "HH:mm" olarak göster), o dosyadaki private
+// fonksiyonu buradan paylaşamadığımız için (iki ayrı ekran) küçük bir
+// kopyası.
+private fun formatMinuteOfDay(minute: Int): String = "%02d:%02d".format(minute / 60, minute % 60)
+
+// SAAT biriminde sabit bir seçenek listesi (3/6/12 saatte bir gün altı
+// sıklıklar da seçilebilsin diye). 24=günde bir, 48/72=iki/üç günde bir,
+// 168=haftada bir.
+//
+// Kullanıcı geri bildirimi: önce tek satır Row (taşıyordu), sonra
+// chunked(3) sabit üçerli bölme (uzun etiketler kelime kelime kırılıyordu),
+// sonra FlowRow (doğal genişlik, taşma/kırılma yoktu ama kullanıcı chip'lerin
+// satırı TAM doldurmasını, genişlemesini istedi). Şimdi AppColorTheme
+// seçicisindeki İLE AYNI desen: chunked(2) + her hücreye weight(1f),
+// satırda kesin 2 chip, ikisi birlikte satırın TAM genişliğini paylaşıyor
+// (metin uzunluğuna göre chip'in payı değil, ikisi EŞİT pay alıyor).
+private val AUTO_BACKUP_INTERVAL_OPTIONS = listOf(3, 6, 12, 24, 48, 72, 168)
+
+@Composable
+private fun AutoBackupIntervalPicker(selectedHours: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AUTO_BACKUP_INTERVAL_OPTIONS.chunked(2).forEach { rowOptions ->
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                rowOptions.forEach { hours ->
+                    FilterChip(
+                        selected = selectedHours == hours,
+                        onClick = { onSelect(hours) },
+                        label = {
+                            Text(
+                                text = when (hours) {
+                                    24 -> stringResource(R.string.google_drive_auto_backup_interval_daily)
+                                    168 -> stringResource(R.string.google_drive_auto_backup_interval_weekly)
+                                    in 1..23 -> stringResource(R.string.google_drive_auto_backup_interval_every_n_hours, hours)
+                                    else -> stringResource(R.string.google_drive_auto_backup_interval_every_n_days, hours / 24)
+                                },
+                                maxLines = 1,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Önceden "Drive'dan geri yüklenemedi" gibi sebepsiz, tek tip bir mesaj
+// gösteriliyordu; hatanın GERÇEK sebebi (yedek bulunamadı, oturum kopmuş,
+// ağ hatası vb.) sadece Log.e ile logcat'e düşüyordu, kullanıcı cihazında
+// görünmüyordu. "Neden başarısız oldu" diye logcat'e bakacak bir geliştirici
+// olmadan anlaşılamıyordu. Artık altındaki gerçek exception mesajını
+// parantez içinde ekliyoruz, böylece kullanıcı ekranı bize/kendine
+// bildirebiliyor.
+private fun driveFailureMessage(baseMessage: String, cause: Throwable?): String {
+    val detail = cause?.message?.takeIf { it.isNotBlank() }
+    return if (detail != null) "$baseMessage ($detail)" else baseMessage
 }
 
 private fun defaultBackupFileName(): String {

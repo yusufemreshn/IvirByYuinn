@@ -397,6 +397,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                     onOpenSettings = { showSettings = true },
                     onOpenFocusMode = { showFocusMode = true },
                     onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
+                    confirmOnDeleteList = confirmationPreferences.confirmListDelete,
                 )
             }
         },
@@ -523,6 +524,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                                 onArchive = onArchiveTask,
                                 confirmOnDelete = confirmationPreferences.confirmTaskDelete,
                                 confirmOnComplete = confirmationPreferences.confirmTaskComplete,
+                                confirmOnArchive = confirmationPreferences.confirmTaskArchive,
                                 confirmOnSubtaskComplete = confirmationPreferences.confirmSubtaskComplete,
                                 modifier = Modifier
                                     .zIndex(if (isDragging) 1f else 0f)
@@ -587,6 +589,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                                 onArchive = onArchiveTask,
                                 confirmOnDelete = confirmationPreferences.confirmTaskDelete,
                                 confirmOnComplete = confirmationPreferences.confirmTaskComplete,
+                                confirmOnArchive = confirmationPreferences.confirmTaskArchive,
                                 confirmOnSubtaskComplete = confirmationPreferences.confirmSubtaskComplete,
                                 // Arama/filtre/sıralama değiştikçe satırlar
                                 // yer değiştiriyor ya da listeden çıkıp
@@ -647,6 +650,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
             onDismiss = { showEditor = false },
             confirmOnSubtaskDelete = confirmationPreferences.confirmSubtaskDelete,
             confirmOnSubtaskComplete = confirmationPreferences.confirmSubtaskComplete,
+            confirmOnSubtaskAdd = confirmationPreferences.confirmSubtaskAdd,
             onSave = { title, categoryId, priority, dueAt, note, recurrence ->
                 // Kullanıcı isteği: aynı listede aynı isimde ikinci bir görev
                 // eklenemesin/böyle bir isme değiştirilemesin. Bu durumda
@@ -715,6 +719,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                 onPermanentlyDelete = viewModel::permanentlyDeleteTask,
                 onDeleteAll = viewModel::permanentlyDeleteAllTasks,
                 onClose = dismiss,
+                confirmOnDelete = confirmationPreferences.confirmTrashDelete,
             )
         }
     }
@@ -728,6 +733,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                 onUnarchive = viewModel::unarchiveTask,
                 onDelete = viewModel::deleteTask,
                 onClose = dismiss,
+                confirmOnDelete = confirmationPreferences.confirmArchivedTaskDelete,
             )
         }
     }
@@ -764,6 +770,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                 onAddCategory = { name, colorHex, onCreated -> viewModel.addCategory(name, colorHex) { onCreated() } },
                 onDeleteCategory = viewModel::deleteCategory,
                 onClose = dismiss,
+                confirmOnDelete = confirmationPreferences.confirmCategoryDelete,
             )
         }
     }
@@ -785,6 +792,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                 onUnarchive = viewModel::unarchiveTaskList,
                 onDelete = viewModel::deleteTaskList,
                 onClose = dismiss,
+                confirmOnDelete = confirmationPreferences.confirmListDelete,
             )
         }
     }

@@ -78,6 +78,7 @@ fun AppDrawerContent(
     // Faz 12c: odak modu.
     onOpenFocusMode: () -> Unit,
     onCloseDrawer: () -> Unit,
+    confirmOnDeleteList: Boolean = true,
 ) {
     var showCreateDialog by remember { mutableStateOf(false) }
     var taskListPendingDelete by remember { mutableStateOf<TaskListEntity?>(null) }
@@ -191,7 +192,7 @@ fun AppDrawerContent(
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.action_delete)) },
                                 onClick = {
-                                    taskListPendingDelete = list
+                                    if (confirmOnDeleteList) taskListPendingDelete = list else onDeleteTaskList(list)
                                     menuExpanded = false
                                 },
                             )

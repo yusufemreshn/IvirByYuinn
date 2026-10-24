@@ -15,14 +15,14 @@ android {
         applicationId = "com.yusufemre.ivirbyyuinn"
         minSdk = 26
         targetSdk = 37
-        versionCode = 3
+        versionCode = 4
         // Ayarlar > Hakkında bölümündeki sürüm numarasının TEK kaynağı
         // burası, PackageManager.getPackageInfo() üzerinden orada
         // otomatik okunuyor (bkz. SettingsScreen.kt AboutSection). Yeni
         // bir derleme alıp "ıvırVX.Y.Z.apk" olarak isimlendirdiğimde, bu
         // satırı "X.Y.Z" ile güncellemem yeterli, başka hiçbir yeri
         // elle değiştirmeme gerek yok.
-        versionName = "1.2.0"
+        versionName = "1.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

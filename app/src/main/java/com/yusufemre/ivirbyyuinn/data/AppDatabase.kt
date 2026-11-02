@@ -17,12 +17,15 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 // version 9 (2026-08-11): tasks'e isArchived/completedAt eklendi (görev
 // düzeyinde arşiv, task_lists'inkiyle aynı isimli ama ayrı bir alan,
 // karıştırmamak lazım).
+// version 10: bağımsız "notes" tablosu eklendi (drawer'daki Notlar ekranı).
+// Task.note ALANIYLA karışmıyor, bu tamamen ayrı, hiçbir foreign key'i
+// olmayan bir not defteri.
 @Database(
     entities = [
         Task::class, TaskListEntity::class, Category::class, Subtask::class,
-        TaskCompletionEntity::class, TaskTemplateEntity::class,
+        TaskCompletionEntity::class, TaskTemplateEntity::class, Note::class,
     ],
-    version = 9,
+    version = 10,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -34,6 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun subtaskDao(): SubtaskDao
     abstract fun taskCompletionDao(): TaskCompletionDao
     abstract fun taskTemplateDao(): TaskTemplateDao
+    abstract fun noteDao(): NoteDao
 
     companion object {
         // @Volatile + synchronized klasik Room/Java singleton deseni: birden
@@ -52,6 +56,7 @@ abstract class AppDatabase : RoomDatabase() {
                     .addMigrations(
                         MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
                         MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9,
+                        MIGRATION_9_10,
                     )
                     // MIGRATION_1_2 sadece Faz 1'den YÜKSELEN cihazlarda
                     // çalışıyor (senin cihazın gibi). Uygulamayı ilk kez

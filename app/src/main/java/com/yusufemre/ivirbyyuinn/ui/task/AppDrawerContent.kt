@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
@@ -74,6 +75,7 @@ fun AppDrawerContent(
     onOpenStats: () -> Unit,
     onOpenCategories: () -> Unit,
     onOpenArchive: () -> Unit,
+    onOpenNotes: () -> Unit,
     onOpenSettings: () -> Unit,
     // Faz 12c: odak modu.
     onOpenFocusMode: () -> Unit,
@@ -223,12 +225,25 @@ fun AppDrawerContent(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
+        // 2026-11-02: kullanıcının isteğiyle drawer sırası: Kategoriler,
+        // Notlar, Takvim, İstatistikler, Arşiv, Odak modu, Çöp kutusu,
+        // Ayarlar.
         NavigationDrawerItem(
-            label = { Text(stringResource(R.string.switcher_trash)) },
-            icon = { Icon(imageVector = Icons.Default.Delete, contentDescription = null) },
+            label = { Text(stringResource(R.string.switcher_categories)) },
+            icon = { Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = null) },
             selected = false,
             onClick = {
-                onOpenTrash()
+                onOpenCategories()
+                onCloseDrawer()
+            },
+            modifier = Modifier.padding(horizontal = 12.dp),
+        )
+        NavigationDrawerItem(
+            label = { Text(stringResource(R.string.switcher_notes)) },
+            icon = { Icon(imageVector = Icons.Default.Edit, contentDescription = null) },
+            selected = false,
+            onClick = {
+                onOpenNotes()
                 onCloseDrawer()
             },
             modifier = Modifier.padding(horizontal = 12.dp),
@@ -254,6 +269,16 @@ fun AppDrawerContent(
             modifier = Modifier.padding(horizontal = 12.dp),
         )
         NavigationDrawerItem(
+            label = { Text(stringResource(R.string.switcher_task_archive)) },
+            icon = { Icon(imageVector = IvirIcons.Archive, contentDescription = null) },
+            selected = false,
+            onClick = {
+                onOpenArchive()
+                onCloseDrawer()
+            },
+            modifier = Modifier.padding(horizontal = 12.dp),
+        )
+        NavigationDrawerItem(
             label = { Text(stringResource(R.string.switcher_focus_mode)) },
             icon = { Icon(imageVector = IvirIcons.Timer, contentDescription = null) },
             selected = false,
@@ -264,23 +289,11 @@ fun AppDrawerContent(
             modifier = Modifier.padding(horizontal = 12.dp),
         )
         NavigationDrawerItem(
-            label = { Text(stringResource(R.string.switcher_categories)) },
-            icon = { Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = null) },
+            label = { Text(stringResource(R.string.switcher_trash)) },
+            icon = { Icon(imageVector = Icons.Default.Delete, contentDescription = null) },
             selected = false,
             onClick = {
-                onOpenCategories()
-                onCloseDrawer()
-            },
-            modifier = Modifier.padding(horizontal = 12.dp),
-        )
-        // 2026-08-11: görev arşivi, bilerek Kategoriler ile Ayarlar
-        // arasında, kullanıcının istediği yerde.
-        NavigationDrawerItem(
-            label = { Text(stringResource(R.string.switcher_task_archive)) },
-            icon = { Icon(imageVector = IvirIcons.Archive, contentDescription = null) },
-            selected = false,
-            onClick = {
-                onOpenArchive()
+                onOpenTrash()
                 onCloseDrawer()
             },
             modifier = Modifier.padding(horizontal = 12.dp),

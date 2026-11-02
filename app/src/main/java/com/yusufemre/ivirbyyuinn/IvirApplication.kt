@@ -12,6 +12,7 @@ import com.yusufemre.ivirbyyuinn.data.FontScalePreferencesRepository
 import com.yusufemre.ivirbyyuinn.data.GoogleDriveBackupRepository
 import com.yusufemre.ivirbyyuinn.data.GoogleDrivePreferencesRepository
 import com.yusufemre.ivirbyyuinn.data.LanguagePreferencesRepository
+import com.yusufemre.ivirbyyuinn.data.NoteRepository
 import com.yusufemre.ivirbyyuinn.data.QuietHoursPreferencesRepository
 import com.yusufemre.ivirbyyuinn.data.ShowHomeScreenPreferencesRepository
 import com.yusufemre.ivirbyyuinn.data.SnoozeDurationPreferencesRepository
@@ -23,6 +24,7 @@ import com.yusufemre.ivirbyyuinn.data.TaskTemplateRepository
 import com.yusufemre.ivirbyyuinn.data.ThemePreferencesRepository
 import com.yusufemre.ivirbyyuinn.data.WeeklyDigestPreferencesRepository
 import com.yusufemre.ivirbyyuinn.domain.AddCategoryUseCase
+import com.yusufemre.ivirbyyuinn.domain.AddNoteUseCase
 import com.yusufemre.ivirbyyuinn.domain.AddSubtaskUseCase
 import com.yusufemre.ivirbyyuinn.domain.AddTaskListUseCase
 import com.yusufemre.ivirbyyuinn.domain.AddTaskUseCase
@@ -31,6 +33,7 @@ import com.yusufemre.ivirbyyuinn.domain.AutoArchiveCompletedTasksUseCase
 import com.yusufemre.ivirbyyuinn.domain.CancelTaskReminderUseCase
 import com.yusufemre.ivirbyyuinn.domain.CompleteGoogleDriveSignInUseCase
 import com.yusufemre.ivirbyyuinn.domain.DeleteCategoryUseCase
+import com.yusufemre.ivirbyyuinn.domain.DeleteNoteUseCase
 import com.yusufemre.ivirbyyuinn.domain.DeleteSubtaskUseCase
 import com.yusufemre.ivirbyyuinn.domain.DeleteTaskListUseCase
 import com.yusufemre.ivirbyyuinn.domain.DeleteTaskTemplateUseCase
@@ -52,6 +55,7 @@ import com.yusufemre.ivirbyyuinn.domain.GetGoogleDriveAccountEmailUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetGoogleDriveBackupPreferencesUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetGoogleDriveSignInIntentUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetLanguagePreferenceUseCase
+import com.yusufemre.ivirbyyuinn.domain.GetNotesUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetQuietHoursUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetShowHomeScreenPreferenceUseCase
 import com.yusufemre.ivirbyyuinn.domain.GetSnoozeDurationUseCase
@@ -98,6 +102,7 @@ import com.yusufemre.ivirbyyuinn.domain.SignOutGoogleDriveUseCase
 import com.yusufemre.ivirbyyuinn.domain.ToggleSubtaskDoneUseCase
 import com.yusufemre.ivirbyyuinn.domain.ToggleTaskDoneUseCase
 import com.yusufemre.ivirbyyuinn.domain.UnarchiveTaskUseCase
+import com.yusufemre.ivirbyyuinn.domain.UpdateNoteUseCase
 import com.yusufemre.ivirbyyuinn.domain.UpdateTaskUseCase
 import com.yusufemre.ivirbyyuinn.domain.UploadBackupToDriveUseCase
 import com.yusufemre.ivirbyyuinn.domain.VerifyAppLockPinUseCase
@@ -165,6 +170,7 @@ class IvirApplication : Application() {
     private val languagePreferencesRepository by lazy { LanguagePreferencesRepository(this) }
     private val appColorThemePreferencesRepository by lazy { AppColorThemePreferencesRepository(this) }
     private val taskTemplateRepository by lazy { TaskTemplateRepository(database.taskTemplateDao()) }
+    private val noteRepository by lazy { NoteRepository(database.noteDao()) }
     private val weeklyDigestPreferencesRepository by lazy { WeeklyDigestPreferencesRepository(this) }
     private val weeklyDigestScheduler by lazy { WeeklyDigestScheduler(this) }
     private val autoArchiveScheduler by lazy { AutoArchiveScheduler(this) }
@@ -299,6 +305,11 @@ class IvirApplication : Application() {
     val getTaskTemplatesUseCase by lazy { GetTaskTemplatesUseCase(taskTemplateRepository) }
     val saveTaskTemplateUseCase by lazy { SaveTaskTemplateUseCase(taskTemplateRepository) }
     val deleteTaskTemplateUseCase by lazy { DeleteTaskTemplateUseCase(taskTemplateRepository) }
+
+    val getNotesUseCase by lazy { GetNotesUseCase(noteRepository) }
+    val addNoteUseCase by lazy { AddNoteUseCase(noteRepository) }
+    val updateNoteUseCase by lazy { UpdateNoteUseCase(noteRepository) }
+    val deleteNoteUseCase by lazy { DeleteNoteUseCase(noteRepository) }
 
     // Repository/veritabanı bağımlılığı olmayan, saf bir UseCase, yine de
     // diğerleriyle AYNI "elle DI" deseniyle burada kuruluyor, tutarlılık için.

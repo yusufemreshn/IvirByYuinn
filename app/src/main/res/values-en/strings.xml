@@ -124,6 +124,7 @@
     <string name="switcher_settings">Settings</string>
     <string name="switcher_categories">Categories</string>
     <string name="switcher_task_archive">Archive</string>
+    <string name="switcher_notes">Notes</string>
     <string name="new_list_dialog_title">New list</string>
     <string name="new_list_name_label">List name</string>
 
@@ -134,6 +135,15 @@
     <string name="delete_category_cd">Delete category</string>
     <string name="category_added_snackbar">"%1$s" category added</string>
     <string name="category_deleted_snackbar">"%1$s" category deleted</string>
+
+    <!-- ui/notes/NotesScreen -->
+    <string name="notes_title">Notes</string>
+    <string name="notes_empty">No notes yet</string>
+    <string name="add_note_cd">Add new note</string>
+    <string name="delete_note_cd">Delete note</string>
+    <string name="note_content_label">Note</string>
+    <string name="confirm_delete_note_title">Delete note</string>
+    <string name="confirm_delete_note_message">This note will be deleted. Are you sure?</string>
 
     <!-- ui/task/TaskListScreen -->
     <string name="task_deleted_snackbar">"%1$s" moved to trash</string>

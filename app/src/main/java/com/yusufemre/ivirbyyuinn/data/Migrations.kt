@@ -209,3 +209,21 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
         db.execSQL("ALTER TABLE tasks ADD COLUMN completedAt INTEGER")
     }
 }
+
+// version 10: bağımsız "notes" tablosu, hiçbir foreign key'i yok, bu yüzden
+// diğer FK-içeren migration'lar gibi tabloyu yeniden kurmaya gerek yok,
+// düz bir CREATE TABLE yeterli.
+val MIGRATION_9_10 = object : Migration(9, 10) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                content TEXT NOT NULL,
+                createdAt INTEGER NOT NULL,
+                updatedAt INTEGER NOT NULL
+            )
+            """.trimIndent(),
+        )
+    }
+}

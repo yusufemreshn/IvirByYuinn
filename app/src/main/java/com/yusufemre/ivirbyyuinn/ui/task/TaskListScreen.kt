@@ -63,6 +63,7 @@ import com.yusufemre.ivirbyyuinn.data.Task
 import com.yusufemre.ivirbyyuinn.domain.SmartView
 import com.yusufemre.ivirbyyuinn.domain.SortOption
 import com.yusufemre.ivirbyyuinn.ui.focus.FocusModeScreen
+import com.yusufemre.ivirbyyuinn.ui.notes.NotesScreen
 import com.yusufemre.ivirbyyuinn.ui.settings.SettingsScreen
 import com.yusufemre.ivirbyyuinn.ui.stats.StatsScreen
 import com.yusufemre.ivirbyyuinn.ui.theme.IvirIcons
@@ -166,6 +167,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
     var showSettings by rememberSaveable { mutableStateOf(false) }
     var showArchivedLists by remember { mutableStateOf(false) }
     var showFocusMode by remember { mutableStateOf(false) }
+    var showNotes by remember { mutableStateOf(false) }
     var showBulkDeleteConfirm by remember { mutableStateOf(false) }
     var showExitConfirm by remember { mutableStateOf(false) }
 
@@ -394,6 +396,7 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
                     onOpenStats = { showStats = true },
                     onOpenCategories = { showCategories = true },
                     onOpenArchive = { showArchive = true },
+                    onOpenNotes = { showNotes = true },
                     onOpenSettings = { showSettings = true },
                     onOpenFocusMode = { showFocusMode = true },
                     onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
@@ -778,6 +781,12 @@ fun TaskListScreen(openAddTaskOnLaunch: Boolean = false, initialTaskTitle: Strin
     if (showSettings) {
         AnimatedDialog(onDismissRequest = { showSettings = false }) { dismiss ->
             SettingsScreen(onClose = dismiss)
+        }
+    }
+
+    if (showNotes) {
+        AnimatedDialog(onDismissRequest = { showNotes = false }) { dismiss ->
+            NotesScreen(onClose = dismiss)
         }
     }
 

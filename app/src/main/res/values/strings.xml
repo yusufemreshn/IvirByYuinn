@@ -130,6 +130,7 @@
     <string name="switcher_settings">Ayarlar</string>
     <string name="switcher_categories">Kategoriler</string>
     <string name="switcher_task_archive">Arşiv</string>
+    <string name="switcher_notes">Notlar</string>
     <string name="new_list_dialog_title">Yeni liste</string>
     <string name="new_list_name_label">Liste adı</string>
 
@@ -140,6 +141,15 @@
     <string name="delete_category_cd">Kategoriyi sil</string>
     <string name="category_added_snackbar">"%1$s" kategorisi eklendi</string>
     <string name="category_deleted_snackbar">"%1$s" kategorisi silindi</string>
+
+    <!-- ui/notes/NotesScreen -->
+    <string name="notes_title">Notlar</string>
+    <string name="notes_empty">Henüz hiç not yok</string>
+    <string name="add_note_cd">Yeni not ekle</string>
+    <string name="delete_note_cd">Notu sil</string>
+    <string name="note_content_label">Not</string>
+    <string name="confirm_delete_note_title">Notu sil</string>
+    <string name="confirm_delete_note_message">Bu not silinecek. Emin misin?</string>
 
     <!-- ui/task/TaskListScreen -->
     <string name="task_deleted_snackbar">"%1$s" çöp kutusuna taşındı</string>
